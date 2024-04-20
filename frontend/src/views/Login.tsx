@@ -4,6 +4,7 @@ import {
   Center,
   Container,
   Group,
+  LoadingOverlay,
   Paper,
   PasswordInput,
   Text,
@@ -15,21 +16,18 @@ import { IconCircleKey } from '@tabler/icons-react';
 import { useAuthControllerSignIn } from '../api/default/default';
 
 export function Authentication() {
-  const {mutateAsync} = useAuthControllerSignIn();
-  
+  const { mutateAsync, isPending } = useAuthControllerSignIn();
+
   const form = useForm({
     initialValues: {
-      email: '',
+      username: '',
       password: '',
     },
 
     validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+      username: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
     },
   });
-
-  // redirect if logged in
-  // return <Navigate to="/"></Navigate>;
 
   return (
     <Box h="100vh" w="100vw">
@@ -42,23 +40,31 @@ export function Authentication() {
             <Title>Login</Title>
           </Group>
 
-          <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+          <Paper
+            withBorder
+            shadow="md"
+            p={30}
+            mt={30}
+            radius="md"
+            pos="relative"
+          >
+            <LoadingOverlay visible={isPending} />
             <form
               onSubmit={form.onSubmit(async (values) => {
                 console.log(values);
                 mutateAsync({
-                  data:{
-                    username: values.email,
-                    password: values.password
-                  }
-                })
+                  data: {
+                    username: values.username,
+                    password: values.password,
+                  },
+                });
               })}
             >
               <TextInput
                 label="Email"
-                placeholder="you@mantine.dev"
+                placeholder="you@name.com"
                 required
-                {...form.getInputProps('email')}
+                {...form.getInputProps('username')}
               />
               <PasswordInput
                 label="Password"
