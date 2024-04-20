@@ -18,7 +18,7 @@ import { IconCircleKey } from '@tabler/icons-react';
 import { useAuthControllerSignUp } from '../api/default/default';
 import { $currUser } from '../global-state/user';
 import { useStore } from '@nanostores/react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, redirect } from 'react-router-dom';
 
 export function Register() {
   const { mutateAsync, isPending, error } = useAuthControllerSignUp();
@@ -36,7 +36,7 @@ export function Register() {
   });
 
   if (user != null) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   return (
@@ -73,11 +73,12 @@ export function Register() {
                     password: values.password,
                   },
                 }).then((user) => {
-                  $currUser.set({
-                    name: user.username,
-                    transcripts: user.transcripts,
-                    token: user.token || '',
-                  });
+                  redirect('/login');
+                  // $currUser.set({
+                  //   name: user.username,
+                  //   transcripts: user.transcripts,
+                  //   token: user.token || '',
+                  // });
                 });
               })}
             >

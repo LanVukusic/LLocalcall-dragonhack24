@@ -954,6 +954,11 @@
   resolved "https://registry.yarnpkg.com/@tsconfig/node16/-/node16-1.0.4.tgz#0b92dcc0cc1c81f6f306a381f28e31b1a56536e9"
   integrity sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==
 
+"@types/audioworklet@^0.0.55":
+  version "0.0.55"
+  resolved "https://registry.yarnpkg.com/@types/audioworklet/-/audioworklet-0.0.55.tgz#9be9331bd8ece3e072b2393719a2200893363c65"
+  integrity sha512-tL7tMCKPjsAVt2ywgoRhkBIOKHKSf0e9K3+3PTRp1tpUiHyrqA0EOdVeVg4j4bul6zHed3T4hRt0K1E7X5hXQQ==
+
 "@types/cookie@^0.4.1":
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/@types/cookie/-/cookie-0.4.1.tgz#bfd02c1f2224567676c1545199f87c3a861d878d"

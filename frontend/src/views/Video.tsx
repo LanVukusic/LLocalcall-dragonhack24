@@ -4,6 +4,7 @@ import io, { Socket } from 'socket.io-client';
 import { SignalData } from 'simple-peer';
 
 import Peer from 'simple-peer/simplepeer.min.js';
+import { Streamer, useAudioStreamer } from './audioStreamRecorder';
 
 interface VideoProps {
   peer: Peer.Instance;
@@ -47,10 +48,9 @@ const Room: React.FC<RoomProps> = ({ match }) => {
   const userVideo = useRef<HTMLVideoElement>(null);
   const peersRef = useRef<PeerData[]>([]);
   const roomID = match.params.roomID;
+  // const {} = useAudioStreamer();
 
   useEffect(() => {
-    console.log('Hej');
-
     socketRef.current = io('http://142.93.161.127:3000');
 
     navigator.mediaDevices
@@ -58,6 +58,9 @@ const Room: React.FC<RoomProps> = ({ match }) => {
       .then((stream) => {
         if (userVideo.current) {
           userVideo.current.srcObject = stream;
+          const streamer = new Streamer(stream, new AudioContext(), (data) => {
+            socketRef.current?.emit('audio', data);
+          });
         }
         if (!socketRef.current) {
           console.error('Socket not connected');
