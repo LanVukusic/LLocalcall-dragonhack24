@@ -1,11 +1,11 @@
-import {  Group, Stack, Title } from '@mantine/core';
+import { Group, ScrollArea, Stack, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { SideBar } from '../sidebar/SideBar';
-import { useState } from 'react';
-import MeetingsList from '../meeting/MeetingList';
+import { useEffect, useState } from 'react';
+import MeetingsList from '../meetingList/MeetingList';
 import { useStore } from '@nanostores/react';
 import { $currUser } from '../../global-state/user';
-
+import Meeting from '../meeting/Meeting';
 
 const meetings = [
   {
@@ -37,42 +37,62 @@ const meetings = [
     attendees: ['David Chen', 'Sarah Miller', 'William Garcia'],
   },
   // live meeting
-    {
-        id: 4,
-        title: 'Sprint Planning Meeting',
-        startTime: new Date(2024, 4, 26, 13, 0), // April 26, 2024, 1:00 PM
-        endTime: new Date(2024, 4, 26, 14, 0), // April 26, 2024, 2:00 PM
-        attendees: ['Olivia Martinez', 'James Brown', 'Sophia Davis'],
-    },
+  {
+    id: 4,
+    title: 'Sprint Planning Meeting',
+    startTime: new Date(2024, 4, 26, 13, 0), // April 26, 2024, 1:00 PM
+    endTime: new Date(2024, 4, 26, 14, 0), // April 26, 2024, 2:00 PM
+    attendees: ['Olivia Martinez', 'James Brown', 'Sophia Davis'],
+  },
 ];
 
 export const DashBoard = () => {
   const [opened, handlers] = useDisclosure(false);
   const [selectedRoom, setSelectedRoom] = useState(0);
 
-  const user = useStore($currUser);
+  const [selectedMeetingId, setSelectedMeetingId] = useState<number | null>(
+    null,
+  );
 
-  $currUser.set('John Doe');
+  const [page, setPage] = useState('dashboard');
+
+  useEffect(() => {
+    if (selectedMeetingId === null) {
+      setPage('dashboard');
+    } else {
+      setPage('meeting');
+    }
+  }, [selectedMeetingId]);
+
+  // const user = useStore($currUser);
+
+  // $currUser.set('John Doe');
 
   return (
-    <Group
-      style={{
-        height: '100%',
-        display: 'grid',
-        gridTemplateColumns: '0.1fr auto',
-      }}
-    >
+    <Group p="0" m="0">
       <SideBar
-        span={1}
         opened={opened}
         handlers={handlers}
         selectedRoom={selectedRoom}
         setSelectedRoom={setSelectedRoom}
       />
-      <Stack m="40" ml="80" mr="80">
-        <Title order={1}>Dashboard</Title>
-        <MeetingsList meetings={meetings} />
-      </Stack>
+      <ScrollArea h="100%">
+
+        <Stack mr="lg" ml="lg"  align="top" h="100vh" style={{overflow: "hidden"}}>
+          {page === 'dashboard' ? (
+            <MeetingsList
+              meetings={meetings}
+              setSelectedMeetingId={setSelectedMeetingId}
+              
+            />
+          ) : (
+            <Meeting
+              meetingId={selectedMeetingId}
+              setSelectedMeetingId={setSelectedMeetingId}
+            />
+          )}
+        </Stack>
+      </ScrollArea>
     </Group>
   );
 };

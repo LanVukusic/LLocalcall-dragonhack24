@@ -26,19 +26,19 @@ export const SideBar = ({
   return (
     <Stack
       p="20"
+      m="0"
+      w={opened ? '300px' : '100px'}
+      bg={opened ? '#F5F5F5' : 'white'}
+      h="100vh"
       style={{
-        height: '100vh',
-        overflow: 'auto',
-        width: opened ? '300px' : '100px',
-        backgroundColor: opened ? '#F5F5F5' : 'white',
         transition: 'width 0.3s',
       }}
       align="left"
     >
       {opened ? (
-        <Stack justify="space-between" h="100%">
-          <Group justify="space-between">
-            <Stack ml="20" st>
+        <Stack justify="space-between" h="100vh" mt="60" >
+          <Group justify="space-between" h="100%" align='top'>
+            <Stack ml="20">
               <Group align="center">
                 {/* <IconDoor size={20} style={{ textAlign: 'center' }} /> */}
                 <Title size={20} mb="20">
@@ -72,9 +72,11 @@ export const SideBar = ({
                 Room 3
               </Text>
             </Stack>
-            <Button onClick={handlers.close} color="#F5F5F5">
-              <IconArrowLeft size={30} color="gray" />
-            </Button>
+            <Stack justify="center">
+              <Button onClick={handlers.close} color="#F5F5F5">
+                <IconArrowLeft size={30} color="gray" />
+              </Button>
+            </Stack>
           </Group>
           <Button
             onClick={() => {
@@ -82,7 +84,7 @@ export const SideBar = ({
                 modal: 'testName',
                 title: 'Create Room',
                 body: {
-                  modalBody: 'Create Room Body'
+                  modalBody: 'Create Room Body',
                 },
               });
             }}
@@ -91,9 +93,11 @@ export const SideBar = ({
           </Button>
         </Stack>
       ) : (
-        <Button onClick={handlers.open} variant="white" color="gray">
-          <IconArrowRight size={30} onClick={handlers.open} />
-        </Button>
+        <Stack h="100vh" justify="center">
+          <Button onClick={handlers.open} variant="light" color="gray">
+            <IconArrowRight size={30} onClick={handlers.open} />
+          </Button>
+        </Stack>
       )}
     </Stack>
   );
