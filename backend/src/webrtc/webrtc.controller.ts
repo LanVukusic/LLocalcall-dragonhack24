@@ -45,6 +45,10 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
           this.logger.log('Connected');
         },
       );
+
+      this.socket.on('data', (data) => {
+        console.log(`Received: ${data}`);
+      });
     } catch (e: any) {
       // this.logger.error(e);
     }
@@ -121,10 +125,10 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // this.logger.log(`Client sending audio: ${data}`);
     //
     this.socket.write(data);
-    fs.appendFile('audio.wav', data, (err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
+    // fs.appendFile('audio.pcm', data, (err) => {
+    //   if (err) {
+    //     console.log(err);
+    //   }
+    // });
   }
 }
