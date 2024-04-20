@@ -7,7 +7,6 @@ import { $currUser } from '../../global-state/user';
 
 // https://orval.dev/guides/custom-axios
 const baseURL: string = import.meta.env.VITE_BACKEND_API;
-console.log({ baseURL });
 
 export const AXIOS_INSTANCE = Axios.create({
   baseURL,

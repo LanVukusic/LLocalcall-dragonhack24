@@ -14,6 +14,9 @@ import {
 import { useForm } from '@mantine/form';
 import { IconCircleKey } from '@tabler/icons-react';
 import { useAuthControllerSignIn } from '../api/default/default';
+import { useStore } from '@nanostores/react';
+import { Navigate } from 'react-router-dom';
+import { $currUser } from '../global-state/user';
 
 export function Authentication() {
   const { mutateAsync, isPending } = useAuthControllerSignIn();
@@ -28,6 +31,12 @@ export function Authentication() {
       username: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
     },
   });
+
+  const user = useStore($currUser);
+
+  if (user != null) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <Box h="100vh" w="100vw">
@@ -57,6 +66,14 @@ export function Authentication() {
                     username: values.username,
                     password: values.password,
                   },
+                }).then((data) => {
+                  // @ts-expect-error pač dela samo api je mlo skif
+                  const token = data.access_token;
+                  $currUser.set({
+                    name: values.username,
+                    token: token,
+                    transcripts: [],
+                  });
                 });
               })}
             >
