@@ -9,7 +9,7 @@ type MeetingProps = {
     endTime: Date;
     attendees: string[];
   };
-  setSelectedMeetingId: React.Dispatch<React.SetStateAction<number | null>>
+  setSelectedMeetingId: (num: number) => void;
 };
 
 const MeetingCard = ({ meeting, setSelectedMeetingId }: MeetingProps) => {
@@ -73,9 +73,12 @@ const MeetingsList = ({
 }) => {
   return (
     <Stack mt="60" pb="lg">
-      <Title order={1}>Dashboard</Title>
       {meetings.map((meeting) => (
-        <MeetingCard key={meeting.id} meeting={meeting} setSelectedMeetingId={setSelectedMeetingId}/>
+        <MeetingCard
+          key={meeting.id}
+          meeting={meeting}
+          setSelectedMeetingId={setSelectedMeetingId}
+        />
       ))}
     </Stack>
   );
