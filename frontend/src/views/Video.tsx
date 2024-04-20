@@ -51,7 +51,7 @@ const Room: React.FC<RoomProps> = ({ match }) => {
   useEffect(() => {
     console.log('Hej');
 
-    socketRef.current = io('http://localhost:3000');
+    socketRef.current = io('http://142.93.161.127:3000');
 
     navigator.mediaDevices
       .getUserMedia({ video: videoConstraints, audio: true })
