@@ -72,7 +72,7 @@ export function Register() {
                     username: values.username,
                     password: values.password,
                   },
-                }).then((user) => {
+                }).then(() => {
                   redirect('/login');
                   // $currUser.set({
                   //   name: user.username,

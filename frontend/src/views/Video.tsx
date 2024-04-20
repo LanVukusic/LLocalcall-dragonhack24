@@ -98,7 +98,7 @@ const Room: React.FC<RoomProps> = ({ match }) => {
             console.log('User joined', payload.signal);
 
             console.log(
-              `My id: ${socketRef.current.id}, Caller id: ${payload.callerID}`,
+              `My id: ${socketRef.current?.id}, Caller id: ${payload.callerID}`,
             );
 
             // Show current state

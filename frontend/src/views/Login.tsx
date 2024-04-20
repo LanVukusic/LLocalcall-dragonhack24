@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   Center,
@@ -7,6 +8,7 @@ import {
   LoadingOverlay,
   Paper,
   PasswordInput,
+  Stack,
   Text,
   TextInput,
   Title,
@@ -19,7 +21,7 @@ import { Navigate } from 'react-router-dom';
 import { $currUser } from '../global-state/user';
 
 export function Authentication() {
-  const { mutateAsync, isPending } = useAuthControllerSignIn();
+  const { mutateAsync, isPending, error } = useAuthControllerSignIn();
 
   const form = useForm({
     initialValues: {
@@ -77,23 +79,35 @@ export function Authentication() {
                 });
               })}
             >
-              <TextInput
-                label="Email"
-                placeholder="you@name.com"
-                required
-                {...form.getInputProps('username')}
-              />
-              <PasswordInput
-                label="Password"
-                placeholder="Your password"
-                required
-                mt="md"
-                {...form.getInputProps('password')}
-              />
+              <Stack>
+                <TextInput
+                  label="Email"
+                  placeholder="you@name.com"
+                  required
+                  {...form.getInputProps('username')}
+                />
+                <PasswordInput
+                  label="Password"
+                  placeholder="Your password"
+                  required
+                  mt="md"
+                  {...form.getInputProps('password')}
+                />
 
-              <Button fullWidth mt="xl" type="submit">
-                Sign in
-              </Button>
+                {error && (
+                  <Alert title={error.message} color="red">
+                    {error.response?.data.message}
+                  </Alert>
+                )}
+
+                <Button fullWidth mt="xl" type="submit">
+                  Sign in
+                </Button>
+
+                <Group>
+                  <Text></Text>
+                </Group>
+              </Stack>
             </form>
           </Paper>
         </Container>
