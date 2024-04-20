@@ -15,10 +15,10 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconCircleKey } from '@tabler/icons-react';
-import { useAuthControllerSignUp } from '../api/default/default';
 import { $currUser } from '../global-state/user';
 import { useStore } from '@nanostores/react';
 import { Navigate, redirect } from 'react-router-dom';
+import { useAuthControllerSignUp } from '../api/auth/auth';
 
 export function Register() {
   const { mutateAsync, isPending, error } = useAuthControllerSignUp();
@@ -72,8 +72,8 @@ export function Register() {
                     username: values.username,
                     password: values.password,
                   },
-                }).then((user) => {
-                  redirect('/login');
+                }).then(() => {
+                  redirect('/login'); // TODO: NEDELA
                   // $currUser.set({
                   //   name: user.username,
                   //   transcripts: user.transcripts,

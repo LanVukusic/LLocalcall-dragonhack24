@@ -51,11 +51,18 @@ const Room: React.FC<RoomProps> = ({ match }) => {
   // const {} = useAudioStreamer();
 
   useEffect(() => {
-    // socketRef.current = io('http://142.93.161.127:3000');
-    socketRef.current = io('http://localhost:3000');
+    socketRef.current = io('http://142.93.161.127:3000');
+    // socketRef.current = io('http://localhost:3000');
 
     navigator.mediaDevices
-      .getUserMedia({ video: videoConstraints, audio: true })
+      .getUserMedia({
+        video: videoConstraints,
+        audio: {
+          sampleRate: 16000,
+          channelCount: 1,
+          echoCancellation: true,
+        },
+      })
       .then((stream) => {
         if (userVideo.current) {
           userVideo.current.srcObject = stream;
@@ -105,7 +112,7 @@ const Room: React.FC<RoomProps> = ({ match }) => {
             console.log('User joined', payload.signal);
 
             console.log(
-              `My id: ${socketRef.current.id}, Caller id: ${payload.callerID}`,
+              `My id: ${socketRef.current?.id}, Caller id: ${payload.callerID}`,
             );
 
             // Show current state

@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   Center,
@@ -7,19 +8,20 @@ import {
   LoadingOverlay,
   Paper,
   PasswordInput,
+  Stack,
   Text,
   TextInput,
   Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconCircleKey } from '@tabler/icons-react';
-import { useAuthControllerSignIn } from '../api/default/default';
 import { useStore } from '@nanostores/react';
 import { Navigate } from 'react-router-dom';
 import { $currUser } from '../global-state/user';
+import { useAuthControllerSignIn } from '../api/auth/auth';
 
 export function Authentication() {
-  const { mutateAsync, isPending } = useAuthControllerSignIn();
+  const { mutateAsync, isPending, error } = useAuthControllerSignIn();
 
   const form = useForm({
     initialValues: {
@@ -44,7 +46,7 @@ export function Authentication() {
         <Container size={620} miw={440}>
           <Group align="baseline">
             <Text c="dimmed">
-              <IconCircleKey></IconCircleKey>
+              <IconCircleKey />
             </Text>
             <Title>Login</Title>
           </Group>
@@ -67,7 +69,6 @@ export function Authentication() {
                     password: values.password,
                   },
                 }).then((data) => {
-                  // @ts-expect-error pač dela samo api je mlo skif
                   const token = data.access_token;
                   $currUser.set({
                     name: values.username,
@@ -77,23 +78,35 @@ export function Authentication() {
                 });
               })}
             >
-              <TextInput
-                label="Email"
-                placeholder="you@name.com"
-                required
-                {...form.getInputProps('username')}
-              />
-              <PasswordInput
-                label="Password"
-                placeholder="Your password"
-                required
-                mt="md"
-                {...form.getInputProps('password')}
-              />
+              <Stack>
+                <TextInput
+                  label="Email"
+                  placeholder="you@name.com"
+                  required
+                  {...form.getInputProps('username')}
+                />
+                <PasswordInput
+                  label="Password"
+                  placeholder="Your password"
+                  required
+                  mt="md"
+                  {...form.getInputProps('password')}
+                />
 
-              <Button fullWidth mt="xl" type="submit">
-                Sign in
-              </Button>
+                {error && (
+                  <Alert title={error.message} color="red">
+                    {error.response?.data.message}
+                  </Alert>
+                )}
+
+                <Button fullWidth mt="xl" type="submit">
+                  Sign in
+                </Button>
+
+                <Group>
+                  <Text></Text>
+                </Group>
+              </Stack>
             </form>
           </Paper>
         </Container>
