@@ -9,6 +9,7 @@ import {
   MessageBody,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import * as net from 'net';
 
 @WebSocketGateway({
   cors: {
@@ -23,8 +24,25 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private users: { [key: string]: string[] } = {};
   private socketToRoom: { [key: string]: string } = {};
 
+  private socket: net.Socket;
+
   handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`);
+
+    /*  try {
+      // 142.93.161.127:43001
+      this.socket = net.createConnection(
+        {
+          host: '142.93.161.127',
+          port: 43001,
+        },
+        () => {
+          this.logger.log('Connected');
+        },
+      );
+    } catch (e: any) {
+      this.logger.error(e);
+    } */
   }
 
   handleDisconnect(client: Socket) {
@@ -91,5 +109,10 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
       signal: payload.signal,
       id: client.id,
     });
+  }
+
+  @SubscribeMessage('audio')
+  handleAudio(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
+    // this.logger.log(`Client sending audio: ${data}`);
   }
 }

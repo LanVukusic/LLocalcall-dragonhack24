@@ -14,7 +14,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { RoomsService } from './rooms.service';
-import { UserRequest } from 'src/common/auth-types';
+import { RequestWithUAT } from 'src/common/auth-types';
 import { CreateMeetingDto } from './dto/create-meeting.dto';
 
 @Controller('rooms')
@@ -28,9 +28,9 @@ export class RoomsController {
   @ApiOperation({ summary: 'Create a new room' })
   create(
     @Body() createRoomDto: CreateRoomDto,
-    @Request() { sub }: UserRequest,
+    @Request() { user }: RequestWithUAT,
   ) {
-    return this.roomsService.create(createRoomDto, +sub);
+    return this.roomsService.create(createRoomDto, +user.sub);
   }
 
   @ApiOperation({ summary: 'Returns all the rooms. No Auth.' })
