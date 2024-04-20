@@ -1,12 +1,17 @@
-import { Group, Title, Text, Avatar, Button } from '@mantine/core';
+import { Group, Title, Avatar, Button } from '@mantine/core';
 import { useStore } from '@nanostores/react';
 // import classes from './Navbar.module.css';
 import { $currUser } from '../../global-state/user';
+import { Navigate } from 'react-router-dom';
 
 export const Navbar = () => {
   // const [opened, { toggle }] = useDisclosure();
 
   const user = useStore($currUser);
+
+  if (user == null) {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <Group
