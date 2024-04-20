@@ -15,10 +15,10 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconCircleKey } from '@tabler/icons-react';
-import { useAuthControllerSignIn } from '../api/default/default';
 import { useStore } from '@nanostores/react';
 import { Navigate } from 'react-router-dom';
 import { $currUser } from '../global-state/user';
+import { useAuthControllerSignIn } from '../api/auth/auth';
 
 export function Authentication() {
   const { mutateAsync, isPending, error } = useAuthControllerSignIn();
@@ -46,7 +46,7 @@ export function Authentication() {
         <Container size={620} miw={440}>
           <Group align="baseline">
             <Text c="dimmed">
-              <IconCircleKey></IconCircleKey>
+              <IconCircleKey />
             </Text>
             <Title>Login</Title>
           </Group>
@@ -69,7 +69,6 @@ export function Authentication() {
                     password: values.password,
                   },
                 }).then((data) => {
-                  // @ts-expect-error pač dela samo api je mlo skif
                   const token = data.access_token;
                   $currUser.set({
                     name: values.username,

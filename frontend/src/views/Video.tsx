@@ -51,11 +51,18 @@ const Room: React.FC<RoomProps> = ({ match }) => {
   // const {} = useAudioStreamer();
 
   useEffect(() => {
-    // socketRef.current = io('http://142.93.161.127:3000');
-    socketRef.current = io('http://localhost:3000');
+    socketRef.current = io('http://142.93.161.127:3000');
+    // socketRef.current = io('http://localhost:3000');
 
     navigator.mediaDevices
-      .getUserMedia({ video: videoConstraints, audio: true })
+      .getUserMedia({
+        video: videoConstraints,
+        audio: {
+          sampleRate: 16000,
+          channelCount: 1,
+          echoCancellation: true,
+        },
+      })
       .then((stream) => {
         if (userVideo.current) {
           userVideo.current.srcObject = stream;
