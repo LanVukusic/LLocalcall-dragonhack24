@@ -69,7 +69,7 @@ export const DashBoard = () => {
   // $currUser.set('John Doe');
 
   return (
-    <Group p="0" m="0">
+    <Group p="0" m="0" display="grid" style={{ gridTemplateColumns: '0.1fr 1fr' }}>
       <SideBar
         opened={opened}
         handlers={handlers}
