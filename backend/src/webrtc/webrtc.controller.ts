@@ -1,9 +1,12 @@
+import { Logger, Injectable } from '@nestjs/common';
 import {
+  OnGatewayConnection,
+  OnGatewayDisconnect,
   WebSocketGateway,
-  SubscribeMessage,
-  MessageBody,
-  ConnectedSocket,
   WebSocketServer,
+  SubscribeMessage,
+  ConnectedSocket,
+  MessageBody,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
@@ -12,60 +15,81 @@ import { Server, Socket } from 'socket.io';
     origin: '*', // Adjust according to your CORS policy
   },
 })
-export class WebrtcGateway {
-  @WebSocketServer()
-  server: Server;
+@Injectable()
+export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer() server: Server;
+  private logger: Logger = new Logger('AppGateway');
 
-  @SubscribeMessage('subscribe')
-  handleSubscribe(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() data: any,
-  ): void {
-    socket.join(data.room);
-    socket.join(data.socketId);
+  private users: { [key: string]: string[] } = {};
+  private socketToRoom: { [key: string]: string } = {};
 
-    // console.log(this.server);
+  handleConnection(client: Socket, ...args: any[]) {
+    this.logger.log(`Client connected: ${client.id}`);
+  }
 
-    // console.log(this.server.of('/webrtc').sockets.size);
-
-    const isRoomPresent = this.server.sockets.adapter.rooms.has(data.room);
-
-    if (isRoomPresent) {
-      socket.to(data.room).emit('new user', { socketId: data.socketId });
+  handleDisconnect(client: Socket) {
+    const roomID = this.socketToRoom[client.id];
+    if (roomID) {
+      this.users[roomID] = this.users[roomID].filter((id) => id !== client.id);
+      if (this.users[roomID].length === 0) {
+        delete this.users[roomID];
+      }
+      delete this.socketToRoom[client.id];
+      this.logger.log(`Client disconnected: ${client.id}`);
     }
   }
 
-  @SubscribeMessage('newUserStart')
-  handleNewUserStart(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() data: any,
-  ): void {
-    socket.to(data.to).emit('newUserStart', { sender: data.sender });
+  @SubscribeMessage('join room')
+  handleJoinRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() roomID: string,
+  ) {
+    this.logger.log(`Client joining room: ${roomID}`);
+
+    if (!this.users[roomID]) {
+      this.users[roomID] = [];
+    }
+
+    if (this.users[roomID].length >= 4) {
+      client.emit('room full');
+      return;
+    }
+
+    this.users[roomID].push(client.id);
+    this.socketToRoom[client.id] = roomID;
+
+    const usersInThisRoom = this.users[roomID].filter((id) => id !== client.id);
+
+    this.logger.log(
+      `Client joined room: ${roomID}. Users in room: ${this.users[roomID]}`,
+    );
+    client.emit('all users', usersInThisRoom);
   }
 
-  @SubscribeMessage('sdp')
-  handleSdp(@ConnectedSocket() socket: Socket, @MessageBody() data: any): void {
-    socket
-      .to(data.to)
-      .emit('sdp', { description: data.description, sender: data.sender });
-  }
+  @SubscribeMessage('sending signal')
+  handleSendingSignal(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    payload: { userToSignal: string; callerID: string; signal: any },
+  ) {
+    this.logger.log(`Client sending signal: ${payload.userToSignal}`);
 
-  @SubscribeMessage('ice candidates')
-  handleIceCandidates(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() data: any,
-  ): void {
-    socket.to(data.to).emit('ice candidates', {
-      candidate: data.candidate,
-      sender: data.sender,
+    this.server.to(payload.userToSignal).emit('user joined', {
+      signal: payload.signal,
+      callerID: payload.callerID,
     });
   }
 
-  @SubscribeMessage('chat')
-  handleChat(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() data: any,
-  ): void {
-    socket.to(data.room).emit('chat', { sender: data.sender, msg: data.msg });
+  @SubscribeMessage('returning signal')
+  handleReturningSignal(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: { signal: any; callerID: string },
+  ) {
+    this.logger.log(`Client returning signal: ${payload.callerID}`);
+
+    this.server.to(payload.callerID).emit('receiving returned signal', {
+      signal: payload.signal,
+      id: client.id,
+    });
   }
 }
