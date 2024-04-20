@@ -41,7 +41,28 @@ const Test2 = ({
   );
 };
 
+const createRoom = ({
+  context,
+  id,
+  innerProps,
+}: ContextModalProps<{ modalPrice: number }>) => {
+  return (
+    <Stack>
+      {innerProps.modalPrice}
+      {id}
+      <Button
+        onClick={() => {
+          context.closeModal(id);
+        }}
+      >
+        close
+      </Button>
+    </Stack>
+  );
+};
+
 export const mantineModals = {
   testName: Test,
   test2name: Test2,
+  createRoom: createRoom,
 } as const;

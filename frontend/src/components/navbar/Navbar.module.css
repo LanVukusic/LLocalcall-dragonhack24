@@ -1,0 +1,11 @@
+.user {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  
+    padding: 5px;
+}
+
+.userName {
+    margin-left: 5px;
+}
