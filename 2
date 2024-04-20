@@ -1,0 +1,17 @@
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+
+@Entity({ name: 'rooms' })
+export class Room {
+  @PrimaryGeneratedColumn('uuid', { name: 'id' })
+  id: string;
+
+  @Column()
+  name: string;
+
+  @Column()
+  description: string;
+  
+  @OneToMany(() => Room, (room) => room.id)
+    rooms: Room[];
+}
+
