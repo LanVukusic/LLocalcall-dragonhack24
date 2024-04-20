@@ -51,14 +51,13 @@ const Room: React.FC<RoomProps> = ({ match }) => {
   // const {} = useAudioStreamer();
 
   useEffect(() => {
-    socketRef.current = io('http://142.93.161.127:3000');
-    // socketRef.current = io('http://localhost:3000');
+    // socketRef.current = io('http://142.93.161.127:3000');
+    socketRef.current = io('http://localhost:3000');
 
     navigator.mediaDevices
       .getUserMedia({
         video: videoConstraints,
         audio: {
-          sampleRate: 16000,
           channelCount: 1,
           echoCancellation: true,
         },
@@ -67,14 +66,20 @@ const Room: React.FC<RoomProps> = ({ match }) => {
         if (userVideo.current) {
           userVideo.current.srcObject = stream;
 
-          new Streamer(stream, new AudioContext(), (data) => {
-            if (!socketRef.current) {
-              console.error('Socket not connected');
-              return;
-            }
+          console.log(stream.getAudioTracks()[0].getSettings());
 
-            socketRef.current.emit('audio', data);
-          });
+          new Streamer(
+            stream,
+            new AudioContext({ sampleRate: 16000 }),
+            (data) => {
+              if (!socketRef.current) {
+                console.error('Socket not connected');
+                return;
+              }
+
+              socketRef.current.emit('audio', data);
+            },
+          );
         }
         if (!socketRef.current) {
           console.error('Socket not connected');
