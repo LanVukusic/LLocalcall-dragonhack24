@@ -3,6 +3,7 @@ import App from '../views/Hello';
 import { Authentication } from '../views/Login';
 import { DashBoard } from '../components/dashboard/Dashboard';
 import { Register } from '../views/Register';
+import Room from '../views/Video';
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ export const router = createBrowserRouter([
       {
         path: '/',
         element: <DashBoard />,
+      },
+      {
+        path: '/video',
+        element: <Room match={{ params: { roomID: 'dsa' } }} />,
       },
     ],
   },
