@@ -1,6 +1,16 @@
-import { Button, Group, Stack, Text, Title } from '@mantine/core';
-import { IconArrowLeft, IconArrowRight } from '@tabler/icons-react';
+import {
+  ActionIcon,
+  Alert,
+  Button,
+  Group,
+  LoadingOverlay,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
+import { IconMenu } from '@tabler/icons-react';
 import { openTypedModal } from '../../mantine/modals/modals-utils';
+import { useRoomsControllerFindAll } from '../../api/rooms/rooms';
 
 type SideBarProps = {
   opened: boolean;
@@ -23,58 +33,58 @@ export const SideBar = ({
     setSelectedRoom(room);
   };
 
+  const { data: rooms, isLoading: loadingRooms } = useRoomsControllerFindAll();
+
   return (
     <Stack
-      p="20"
+      h="100%"
+      p="md"
       style={{
-        height: '100vh',
         overflow: 'auto',
         width: opened ? '300px' : '100px',
         backgroundColor: opened ? '#F5F5F5' : 'white',
         transition: 'width 0.3s',
       }}
+      pos="relative"
       align="left"
     >
+      <LoadingOverlay visible={loadingRooms} />
       {opened ? (
         <Stack justify="space-between" h="100%">
-          <Group justify="space-between">
-            <Stack ml="20" st>
-              <Group align="center">
+          <Group justify="space-between" w="100%" h="100%">
+            <Stack w="100%" h="100%">
+              <Group align="center" justify="space-between" w="100%">
                 {/* <IconDoor size={20} style={{ textAlign: 'center' }} /> */}
-                <Title size={20} mb="20">
+                <Title order={2} c="teal.6">
                   Rooms
                 </Title>
+                <ActionIcon onClick={handlers.close} variant="subtle">
+                  <IconMenu size={30} />
+                </ActionIcon>
               </Group>
+              {rooms &&
+                rooms.map((room) => {
+                  return (
+                    <Text
+                      key={room.id}
+                      ml="20"
+                      m="5"
+                      onClick={() => setRoom(0)}
+                      style={{
+                        fontWeight: selectedRoom === 0 ? 'bold' : 'normal',
+                      }}
+                    >
+                      Room 1
+                    </Text>
+                  );
+                })}
 
-              <Text
-                ml="20"
-                m="5"
-                onClick={() => setRoom(0)}
-                style={{ fontWeight: selectedRoom === 0 ? 'bold' : 'normal' }}
-              >
-                Room 1
-              </Text>
-              <Text
-                ml="20"
-                m="5"
-                onClick={() => setRoom(1)}
-                style={{ fontWeight: selectedRoom === 1 ? 'bold' : 'normal' }}
-              >
-                Room 2
-              </Text>
-
-              <Text
-                ml="20"
-                m="5"
-                onClick={() => setRoom(2)}
-                style={{ fontWeight: selectedRoom === 2 ? 'bold' : 'normal' }}
-              >
-                Room 3
-              </Text>
+              {rooms && rooms.length == 0 && (
+                <Alert mt="auto" title="Its empty here" w="100%">
+                  <Stack>Add new room</Stack>
+                </Alert>
+              )}
             </Stack>
-            <Button onClick={handlers.close} color="#F5F5F5">
-              <IconArrowLeft size={30} color="gray" />
-            </Button>
           </Group>
           <Button
             onClick={() => {
@@ -82,7 +92,7 @@ export const SideBar = ({
                 modal: 'testName',
                 title: 'Create Room',
                 body: {
-                  modalBody: 'Create Room Body'
+                  modalBody: 'Create Room Body',
                 },
               });
             }}
@@ -91,9 +101,9 @@ export const SideBar = ({
           </Button>
         </Stack>
       ) : (
-        <Button onClick={handlers.open} variant="white" color="gray">
-          <IconArrowRight size={30} onClick={handlers.open} />
-        </Button>
+        <ActionIcon onClick={handlers.open} variant="subtle" size="lg">
+          <IconMenu size={30} onClick={handlers.open} />
+        </ActionIcon>
       )}
     </Stack>
   );

@@ -7,11 +7,10 @@ import { Outlet } from 'react-router-dom';
 // import { spotlight } from '@mantine/spotlight';
 
 function App() {
-  
   return (
-    <Stack style={{height: '100%'}}>
+    <Stack style={{ height: '100vh' }} gap="0">
       <Navbar />
-      <Outlet/>
+      <Outlet />
       {/* <Footer/> */}
     </Stack>
   );
