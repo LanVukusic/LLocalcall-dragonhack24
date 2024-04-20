@@ -1,9 +1,9 @@
 // import { getToken } from "@/common/localStorage";
-import { notifications } from "@mantine/notifications";
-import Axios, { AxiosError, AxiosRequestConfig } from "axios";
+import { notifications } from '@mantine/notifications';
+import Axios, { AxiosError, AxiosRequestConfig } from 'axios';
 // import { redirect } from "react-router-dom";
-import qs from "qs";
-import { $currUser } from "../../global-state/user";
+import qs from 'qs';
+import { $currUser } from '../../global-state/user';
 
 // https://orval.dev/guides/custom-axios
 const baseURL: string = import.meta.env.VITE_BACKEND_API;
@@ -13,14 +13,14 @@ export const AXIOS_INSTANCE = Axios.create({
   paramsSerializer: {
     // Important to use qs instead of the default URLSearchParams
     serialize: (params) => {
-      return qs.stringify(params, { arrayFormat: "comma" });
+      return qs.stringify(params, { arrayFormat: 'comma' });
     },
   },
 });
 
 export const customInstance = <T>(
   config: AxiosRequestConfig,
-  options?: AxiosRequestConfig
+  options?: AxiosRequestConfig,
 ): Promise<T> => {
   const source = Axios.CancelToken.source();
 
@@ -37,7 +37,7 @@ export const customInstance = <T>(
   });
   // @ts-expect-error cant usually extend promise signiture
   promise.cancel = () => {
-    source.cancel("Query was cancelled");
+    source.cancel('Query was cancelled');
   };
 
   return promise;
@@ -48,12 +48,12 @@ AXIOS_INSTANCE.interceptors.request.use(
     // const token = getToken();
     const user = $currUser.get();
     if (user && user.token) {
-      config.headers.Authorization = user.token ? `Bearer ${user.token}` : "";
+      config.headers.Authorization = user.token ? `Bearer ${user.token}` : '';
     }
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 interface BeErrorType {
@@ -69,8 +69,8 @@ AXIOS_INSTANCE.interceptors.response.use(
     // when session is expired
     if (error.response?.status == 401) {
       notifications.show({
-        message: "Seja je potekla.",
-        color: "red",
+        message: 'Seja je potekla.',
+        color: 'red',
         // id: "sessionExpired",
       });
       $currUser.set(null);
@@ -80,7 +80,7 @@ AXIOS_INSTANCE.interceptors.response.use(
     }
 
     throw error;
-  }
+  },
 );
 
 // In case you want to wrap the body type (optional)

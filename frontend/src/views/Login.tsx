@@ -4,6 +4,7 @@ import {
   Center,
   Container,
   Group,
+  LoadingOverlay,
   Paper,
   PasswordInput,
   Text,
@@ -13,23 +14,29 @@ import {
 import { useForm } from '@mantine/form';
 import { IconCircleKey } from '@tabler/icons-react';
 import { useAuthControllerSignIn } from '../api/default/default';
+import { useStore } from '@nanostores/react';
+import { Navigate } from 'react-router-dom';
+import { $currUser } from '../global-state/user';
 
 export function Authentication() {
-  const {mutateAsync} = useAuthControllerSignIn();
-  
+  const { mutateAsync, isPending } = useAuthControllerSignIn();
+
   const form = useForm({
     initialValues: {
-      email: '',
+      username: '',
       password: '',
     },
 
     validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+      username: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
     },
   });
 
-  // redirect if logged in
-  // return <Navigate to="/"></Navigate>;
+  const user = useStore($currUser);
+
+  if (user != null) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <Box h="100vh" w="100vw">
@@ -42,23 +49,39 @@ export function Authentication() {
             <Title>Login</Title>
           </Group>
 
-          <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+          <Paper
+            withBorder
+            shadow="md"
+            p={30}
+            mt={30}
+            radius="md"
+            pos="relative"
+          >
+            <LoadingOverlay visible={isPending} />
             <form
               onSubmit={form.onSubmit(async (values) => {
                 console.log(values);
                 mutateAsync({
-                  data:{
-                    username: values.email,
-                    password: values.password
-                  }
-                })
+                  data: {
+                    username: values.username,
+                    password: values.password,
+                  },
+                }).then((data) => {
+                  // @ts-expect-error pač dela samo api je mlo skif
+                  const token = data.access_token;
+                  $currUser.set({
+                    name: values.username,
+                    token: token,
+                    transcripts: [],
+                  });
+                });
               })}
             >
               <TextInput
                 label="Email"
-                placeholder="you@mantine.dev"
+                placeholder="you@name.com"
                 required
-                {...form.getInputProps('email')}
+                {...form.getInputProps('username')}
               />
               <PasswordInput
                 label="Password"

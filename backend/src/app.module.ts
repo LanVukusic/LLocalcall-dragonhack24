@@ -7,6 +7,7 @@ import { RoomsModule } from './rooms/rooms.module';
 import { TranscriptsModule } from './transcripts/transcripts.module';
 import { UsersModule } from './users/users.module';
 import { ConnectorsModule } from './connectors/connectors.module';
+import { WebrtcModule } from './webrtc/webrtc.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ConnectorsModule } from './connectors/connectors.module';
     MeetingsModule,
     TranscriptsModule,
     ConnectorsModule,
+    WebrtcModule,
   ],
   controllers: [],
   providers: [],
