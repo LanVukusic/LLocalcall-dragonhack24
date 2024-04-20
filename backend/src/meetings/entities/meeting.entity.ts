@@ -1,10 +1,18 @@
+import { Room } from 'src/rooms/entities/room.entity';
 import { Transcript } from 'src/transcripts/entities/transcript.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'meetings' })
 export class Meeting {
-  @PrimaryGeneratedColumn('uuid', { name: 'id' })
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   name: string;
@@ -17,4 +25,8 @@ export class Meeting {
 
   @OneToMany(() => Transcript, (transcript) => transcript.meeting)
   transcripts: Transcript[];
+
+  @OneToOne(() => Room)
+  @JoinColumn()
+  room: Room;
 }

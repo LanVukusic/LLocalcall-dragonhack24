@@ -10,8 +10,8 @@ import {
 
 @Entity({ name: 'transcripts' })
 export class Transcript {
-  @PrimaryGeneratedColumn('uuid', { name: 'id' })
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   text: string;

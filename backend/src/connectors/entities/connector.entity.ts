@@ -17,8 +17,8 @@ export enum Service {
 @Entity({ name: 'connectors' })
 @Unique(['service', 'room'])
 export class Connector {
-  @PrimaryGeneratedColumn('uuid', { name: 'id' })
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({
     type: 'enum',

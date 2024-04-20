@@ -11,8 +11,8 @@ import { Transcript } from 'src/transcripts/entities/transcript.entity';
 
 @Entity({ name: 'users' })
 export class Users {
-  @PrimaryGeneratedColumn('uuid', { name: 'id' })
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   username: string;

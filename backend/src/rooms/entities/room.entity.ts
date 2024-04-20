@@ -1,3 +1,4 @@
+import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { Users } from 'src/users/users.entity';
 import {
   Column,
@@ -10,8 +11,8 @@ import {
 
 @Entity({ name: 'rooms' })
 export class Room {
-  @PrimaryGeneratedColumn('uuid', { name: 'id' })
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   name: string;
@@ -19,10 +20,10 @@ export class Room {
   @Column()
   description: string;
 
-  @OneToOne(() => Users)
+  @OneToOne(() => Users, () => Room, { nullable: false })
   @JoinColumn()
   createdBy: Users;
 
-  @OneToMany(() => Room, (room) => room.id)
-  rooms: Room[];
+  @OneToMany(() => Meeting, (meeting) => meeting.room)
+  meetings: Meeting[];
 }
