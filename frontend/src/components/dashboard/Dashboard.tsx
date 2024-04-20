@@ -1,17 +1,10 @@
-import {
-  Container,
-  Flex,
-  Group,
-  ScrollArea,
-  Stack,
-  Title,
-} from '@mantine/core';
+import { Container, Flex, ScrollArea, Stack, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { SideBar } from '../sidebar/SideBar';
 import { useState } from 'react';
-import MeetingsList from '../meeting/MeetingList';
-import { useStore } from '@nanostores/react';
-import { $currUser } from '../../global-state/user';
+import MeetingsList from '../meetingList/MeetingList';
+import Meeting from '../meeting/Meeting';
+
 const meetings = [
   {
     id: 0,
@@ -75,8 +68,11 @@ const meetings = [
 export const DashBoard = () => {
   const [opened, handlers] = useDisclosure(false);
   const [selectedRoom, setSelectedRoom] = useState(0);
+  const [selectedMeetingId, setSelectedMeetingId] = useState<number | null>(
+    null,
+  );
 
-  const user = useStore($currUser);
+  const [page, setPage] = useState('dashboard');
 
   return (
     <Flex
@@ -99,7 +95,17 @@ export const DashBoard = () => {
 
         <ScrollArea h="100%" type="always" w="100%">
           <Container size="sm">
-            <MeetingsList meetings={meetings} />
+            {page === 'dashboard' ? (
+              <MeetingsList
+                meetings={meetings}
+                setSelectedMeetingId={setSelectedMeetingId}
+              />
+            ) : (
+              <Meeting
+                meetingId={selectedMeetingId}
+                setSelectedMeetingId={setSelectedMeetingId}
+              />
+            )}
           </Container>
         </ScrollArea>
       </Stack>

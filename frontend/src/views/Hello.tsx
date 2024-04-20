@@ -8,7 +8,7 @@ import { Outlet } from 'react-router-dom';
 
 function App() {
   return (
-    <Stack h="100%" gap="0">
+    <Stack style={{ height: '100vh' }} gap="0">
       <Navbar />
       <Outlet />
       {/* <Footer/> */}

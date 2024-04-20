@@ -11,7 +11,7 @@ export const Navbar = () => {
   return (
     <Group
       justify="space-between"
-      m="l"
+      m="0"
       p="sm"
       bg="#F5F5F5"
       style={{ width: '100%' }}

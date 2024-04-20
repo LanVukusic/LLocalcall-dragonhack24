@@ -1,4 +1,4 @@
-import { Card, Text, Stack, Badge, ScrollArea } from '@mantine/core'; // Assuming you're using Mantine
+import { Card, Text, Stack, Badge, Group, Title } from '@mantine/core'; // Assuming you're using Mantine
 import classes from './MeetingList.module.css';
 
 type MeetingProps = {
@@ -9,9 +9,10 @@ type MeetingProps = {
     endTime: Date;
     attendees: string[];
   };
+  setSelectedMeetingId: React.Dispatch<React.SetStateAction<number | null>>
 };
 
-const MeetingCard = ({ meeting }: MeetingProps) => {
+const MeetingCard = ({ meeting, setSelectedMeetingId }: MeetingProps) => {
   const isPast = meeting.startTime < new Date(); // Check if meeting has already started
   const isLive =
     meeting.startTime <= new Date() && meeting.endTime >= new Date();
@@ -32,19 +33,25 @@ const MeetingCard = ({ meeting }: MeetingProps) => {
       shadow="md"
       radius="md"
       withBorder
-      p={4}
+      p={20}
       style={{ width: '100%' }}
-      p="20"
       className={classes.meetingCard}
+      onClick={() => {
+        setSelectedMeetingId(parseInt(meeting.id));
+      }}
     >
       <Stack>
-        <Text style={{ fontWeight: 'bold' }}>
-          {meeting.title} {status}
-        </Text>
-        <Text>
-          {meeting.startTime.toLocaleString()} -{' '}
-          {meeting.endTime.toLocaleString()}
-        </Text>
+        <Group>
+          <Text style={{ fontWeight: 'bold' }}>{meeting.title} </Text>
+          {status}
+        </Group>
+        <Group>
+          <Text>
+            {meeting.startTime.toLocaleString()} -{' '}
+            {meeting.endTime.toLocaleString()}
+          </Text>
+        </Group>
+
         <Text>Attendees: {meeting.attendees.join(', ')}</Text>
       </Stack>
     </Card>
@@ -53,13 +60,22 @@ const MeetingCard = ({ meeting }: MeetingProps) => {
 
 const MeetingsList = ({
   meetings,
+  setSelectedMeetingId,
 }: {
-  meetings: MeetingProps['meeting'][];
+  meetings: {
+    id: string;
+    title: string;
+    startTime: Date;
+    endTime: Date;
+    attendees: string[];
+  }[];
+  setSelectedMeetingId: React.Dispatch<React.SetStateAction<number | null>>;
 }) => {
   return (
-    <Stack w="100%">
+    <Stack mt="60" pb="lg">
+      <Title order={1}>Dashboard</Title>
       {meetings.map((meeting) => (
-        <MeetingCard key={meeting.id} meeting={meeting} />
+        <MeetingCard key={meeting.id} meeting={meeting} setSelectedMeetingId={setSelectedMeetingId}/>
       ))}
     </Stack>
   );
