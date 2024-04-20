@@ -1,4 +1,4 @@
-import { Card, Text, Stack, Badge } from '@mantine/core'; // Assuming you're using Mantine
+import { Card, Text, Stack, Badge, ScrollArea } from '@mantine/core'; // Assuming you're using Mantine
 import classes from './MeetingList.module.css';
 
 type MeetingProps = {
@@ -13,7 +13,8 @@ type MeetingProps = {
 
 const MeetingCard = ({ meeting }: MeetingProps) => {
   const isPast = meeting.startTime < new Date(); // Check if meeting has already started
-  const isLive = meeting.startTime <= new Date() && meeting.endTime >= new Date();
+  const isLive =
+    meeting.startTime <= new Date() && meeting.endTime >= new Date();
 
   // const { hovered, ref } = useHover();
 
@@ -27,14 +28,24 @@ const MeetingCard = ({ meeting }: MeetingProps) => {
   }
   // console.log(meeting);
   return (
-    <Card shadow="md" radius="md" withBorder p={4} style={{width: '100%'}} p="20" className={classes.meetingCard}>
+    <Card
+      shadow="md"
+      radius="md"
+      withBorder
+      p={4}
+      style={{ width: '100%' }}
+      p="20"
+      className={classes.meetingCard}
+    >
       <Stack>
-        <Text style={{ fontWeight: 'bold' }}>{meeting.title} {status}</Text>
+        <Text style={{ fontWeight: 'bold' }}>
+          {meeting.title} {status}
+        </Text>
         <Text>
-          {meeting.startTime.toLocaleString()} - {meeting.endTime.toLocaleString()}
+          {meeting.startTime.toLocaleString()} -{' '}
+          {meeting.endTime.toLocaleString()}
         </Text>
         <Text>Attendees: {meeting.attendees.join(', ')}</Text>
-
       </Stack>
     </Card>
   );
@@ -46,7 +57,7 @@ const MeetingsList = ({
   meetings: MeetingProps['meeting'][];
 }) => {
   return (
-    <Stack>
+    <Stack w="100%">
       {meetings.map((meeting) => (
         <MeetingCard key={meeting.id} meeting={meeting} />
       ))}

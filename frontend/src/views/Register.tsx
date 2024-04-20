@@ -76,7 +76,7 @@ export function Register() {
                   $currUser.set({
                     name: user.username,
                     transcripts: user.transcripts,
-                    token: '', // user.token
+                    token: user.token || '',
                   });
                 });
               })}
