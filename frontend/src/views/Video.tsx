@@ -4,7 +4,7 @@ import io, { Socket } from 'socket.io-client';
 import { SignalData } from 'simple-peer';
 
 import Peer from 'simple-peer/simplepeer.min.js';
-import { Streamer, useAudioStreamer } from './audioStreamRecorder';
+import { Streamer } from './audioStreamRecorder';
 
 interface VideoProps {
   peer: Peer.Instance;
@@ -147,7 +147,7 @@ const Room: React.FC<RoomProps> = ({ match }) => {
     peer.on('signal', (signal: SignalData) => {
       console.log('Signal', signal);
 
-      if (signal.renegotiate || signal.transceiverRequest) return;
+      // if (signal.renegotiate || signal.transceiverRequest) return;
 
       socketRef.current?.emit('sending signal', {
         userToSignal,
