@@ -49,7 +49,6 @@ const meetings = [
 export const DashBoard = () => {
   const [opened, handlers] = useDisclosure(false);
   const [selectedRoom, setSelectedRoom] = useState(0);
-
   const [selectedMeetingId, setSelectedMeetingId] = useState<number | null>(
     null,
   );
@@ -78,7 +77,7 @@ export const DashBoard = () => {
       />
       <ScrollArea h="100%">
 
-        <Stack mr="lg" ml="lg"  align="top" h="100vh" style={{overflow: "hidden"}}>
+        <Stack mr="lg" ml="lg"  align="top" h="100vh" >
           {page === 'dashboard' ? (
             <MeetingsList
               meetings={meetings}

@@ -36,7 +36,7 @@ export const SideBar = ({
       align="left"
     >
       {opened ? (
-        <Stack justify="space-between" h="100vh" mt="60" >
+        <Stack justify="space-between" h="100vh" mt="40" >
           <Group justify="space-between" h="100%" align='top'>
             <Stack ml="20">
               <Group align="center">

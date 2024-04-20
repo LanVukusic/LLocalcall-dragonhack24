@@ -3,77 +3,116 @@ import {
   Card,
   Grid,
   Group,
-  
   Stack,
-  Title,
   Text,
   Avatar,
   Badge,
   Button,
 } from '@mantine/core';
 
-import { IconDoorExit, IconMaximize, IconMinimize } from '@tabler/icons-react';
+import {
+  IconMicrophone,
+  IconMicrophoneOff,
+  IconVideo,
+  IconVideoOff,
+} from '@tabler/icons-react';
+
+const attendees = [
+  {
+    id: 1,
+    name: 'Alice Johnson',
+    muted: false,
+    cameraOn: true,
+  },
+  {
+    id: 2,
+    name: 'Bob Williams',
+    muted: true,
+    cameraOn: true,
+  },
+  {
+    id: 3,
+    name: 'Emily Brown',
+    muted: false,
+    cameraOn: true,
+  },
+  {
+    id: 4,
+    name: 'David Chen',
+    muted: false,
+    cameraOn: false,
+  },
+  {
+    id: 5,
+    name: 'Sarah Miller',
+    muted: true,
+    cameraOn: false,
+  },
+  {
+    id: 6,
+    name: 'William Garcia',
+    muted: false,
+    cameraOn: false,
+  },
+  {
+    id: 7,
+    name: 'Olivia Martinez',
+    muted: false,
+    cameraOn: true,
+  },
+  {
+    id: 8,
+    name: 'James Brown',
+    muted: true,
+    cameraOn: true,
+  },
+  {
+    id: 9,
+    name: 'Sophia Davis',
+    muted: false,
+    cameraOn: true,
+  },
+];
 
 interface MeetingProps {
-    meetingId: number;
-    setSelectedMeetingId: React.Dispatch<React.SetStateAction<number | null>>
+  meetingId: number;
+  setSelectedMeetingId: React.Dispatch<React.SetStateAction<number | null>>;
 }
 
-const Meeting = ({ meetingId, setSelectedMeetingId }: MeetingProps ) => {
-  const [gridSize, setGridSize] = useState(2); // Initial grid size (2x2)
-    console.log(meetingId);
-  const toggleGridSize = () => {
-    setGridSize((prevSize) => (prevSize === 2 ? 1 : 2));
+const Meeting = ({ meetingId, setSelectedMeetingId }: MeetingProps) => {
+  // const [gridSize, setGridSize] = useState(2); // Initial grid size (2x2)
+  console.log(meetingId);
+  //   const toggleGridSize = () => {
+  //     setGridSize((prevSize) => (prevSize === 2 ? 1 : 2));
+  //   };
+
+  // load meeting based on meetingId
+  
+
+  const [cameraStatus, setCameraStatus] = useState(true); // Camera on by default
+  const [microphoneStatus, setMicrophoneStatus] = useState(true); // Microphone on by default
+  const onCameraToggle = () => {
+    setCameraStatus((prevStatus) => !prevStatus);
   };
 
-  const attendees = [
-    {
-      id: 1,
-      name: 'Alice Johnson',
-      muted: false,
-    },
-    {
-      id: 2,
-      name: 'Bob Williams',
-      muted: true,
-    },
-    {
-      id: 3,
-      name: 'Emily Brown',
-      muted: false,
-    },
-    {
-      id: 4,
-      name: 'David Chen',
-      muted: false,
-    },
-    {
-      id: 5,
-      name: 'Sarah Miller',
-      muted: true,
-    },
-    
-  ];
+  const onMicrophoneToggle = () => {
+    setMicrophoneStatus((prevStatus) => !prevStatus);
+  };
 
   return (
-    <Stack mt="60">
-      <Group p="10">
-        <Title order={2}>Meeting Title</Title>
-        <Button onClick={toggleGridSize}>
-          {gridSize === 2 ? <IconMinimize size={20} /> : <IconMaximize size={20} />}
-        </Button>
-        <Button><IconDoorExit onClick={() => {
-            setSelectedMeetingId(null);
-        }} /></Button>
-      </Group>
-      <Grid grow pb="md">
+    <Stack mt="40">
+      <Grid grow pb="md" gutter="xs">
         {attendees.map((attendee) => (
-          <Grid.Col key={attendee.id} span={gridSize === 2 ? 1 : 2}>
-            <Card shadow="md" radius="md" withBorder p={10}>
-              <Stack>
-                <Avatar src={`https://avatars.dicebear.com/api/adventurer/${attendee.name}.svg`} size={60} />
-                <Stack>
+          <Grid.Col key={attendee.id} span={4}>
+            <Card shadow="md" radius="md" withBorder p={10} h="200px">
+              <Stack justify="center" align="center" h="100%">
+                <Avatar
+                  src={`https://avatars.dicebear.com/api/adventurer/${attendee.name}.svg`}
+                  size={60}
+                />
+                <Stack align="center">
                   <Text>{attendee.name}</Text>
+
                   {attendee.muted && (
                     <Badge color="gray" variant="light">
                       Muted
@@ -85,6 +124,27 @@ const Meeting = ({ meetingId, setSelectedMeetingId }: MeetingProps ) => {
           </Grid.Col>
         ))}
       </Grid>
+      <Group mt="auto" p="10" justify="left">
+        <Button onClick={() => onMicrophoneToggle()}>
+          {microphoneStatus ? (
+            <IconMicrophone size={20} />
+          ) : (
+            <IconMicrophoneOff size={20} />
+          )}
+        </Button>
+        <Button onClick={() => onCameraToggle()}>
+          {cameraStatus ? <IconVideo size={20} /> : <IconVideoOff size={20} />}
+        </Button>
+
+        <Button
+          variant="light"
+          onClick={() => {
+            setSelectedMeetingId(null);
+          }}
+        >
+          Leave Meeting
+        </Button>
+      </Group>
     </Stack>
   );
 };

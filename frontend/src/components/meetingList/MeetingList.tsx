@@ -72,7 +72,7 @@ const MeetingsList = ({
   setSelectedMeetingId: React.Dispatch<React.SetStateAction<number | null>>;
 }) => {
   return (
-    <Stack mt="60">
+    <Stack mt="60" pb="lg">
       <Title order={1}>Dashboard</Title>
       {meetings.map((meeting) => (
         <MeetingCard key={meeting.id} meeting={meeting} setSelectedMeetingId={setSelectedMeetingId}/>
