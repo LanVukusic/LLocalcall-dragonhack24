@@ -4,13 +4,9 @@ import { SideBar } from '../sidebar/SideBar';
 import { useState } from 'react';
 import { MeetingsList } from '../meetingList/MeetingList';
 
-
 import { Room } from '../../api/model';
 // import { useMeetingsControllerUpdate } from '../../api/meetings/meetings';
-import {
-  useRoomsControllerFindAll,
-
-} from '../../api/rooms/rooms';
+import { useRoomsControllerFindAll } from '../../api/rooms/rooms';
 
 export const DashBoard = () => {
   const [opened, handlers] = useDisclosure(false);

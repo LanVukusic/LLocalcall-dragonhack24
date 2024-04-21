@@ -50,8 +50,7 @@ const CreateMeeting = ({
   context,
   id,
   innerProps,
-}: ContextModalProps<{ roomId: number }>) => {
-
+}: ContextModalProps<{ roomId: number; refetch: () => void }>) => {
   const { mutateAsync, isPending } = useRoomsControllerCreateMeeting();
 
   const form = useForm({
@@ -60,7 +59,6 @@ const CreateMeeting = ({
       startTime: '',
       duration: 0,
     },
-
   });
 
   function formatDate(timestamp: number): string {
@@ -72,12 +70,9 @@ const CreateMeeting = ({
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const seconds = String(date.getSeconds()).padStart(2, '0');
     // const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
-  
+
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds} `;
   }
-
- 
-  
 
   return (
     <Stack>
@@ -91,8 +86,9 @@ const CreateMeeting = ({
               duration: values.duration,
             },
             id: innerProps.roomId.toString(),
-          }).then((data) => {
-            console.log(data);
+          }).then(() => {
+            innerProps.refetch();
+            console.log('Meeting created');
           });
           context.closeModal(id);
         })}
@@ -103,9 +99,8 @@ const CreateMeeting = ({
           required
           {...form.getInputProps('name')}
         />
-        
         <TextInput
-          label="Duration"
+          label="Meeting duration (minutes)"
           placeholder="Meeting duration"
           required
           mt="md"
@@ -119,7 +114,11 @@ const CreateMeeting = ({
   );
 };
 
-const CreateRoom = ({ context, id, innerProps }: ContextModalProps<{refetch: () => void}>) => {
+const CreateRoom = ({
+  context,
+  id,
+  innerProps,
+}: ContextModalProps<{ refetch: () => void }>) => {
   const { mutateAsync, isPending } = useRoomsControllerCreate();
 
   const form = useForm({
@@ -140,8 +139,7 @@ const CreateRoom = ({ context, id, innerProps }: ContextModalProps<{refetch: () 
                 name: values.name,
                 description: values.description,
               },
-            }).then((data) => {
-              console.log(data);
+            }).then(() => {
               innerProps.refetch();
             });
             context.closeModal(id);

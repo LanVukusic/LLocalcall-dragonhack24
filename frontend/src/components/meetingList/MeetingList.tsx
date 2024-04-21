@@ -78,6 +78,8 @@ export const MeetingsList = ({ room }: { room: Room }) => {
           modal: 'createMeeting',
           title: 'Create Meeting',
           body: {
+            refetch: refetch,
+
             roomId: room.id,
           },
         });
@@ -88,6 +90,7 @@ export const MeetingsList = ({ room }: { room: Room }) => {
     </Button>
   );
 
+  const { refetch } = useRoomsControllerGetMeetings(room.id.toString());
   return (
     <Container>
       <Stack mt="40" pb="lg" pos="relative" gap="xl">
