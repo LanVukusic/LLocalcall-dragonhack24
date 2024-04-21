@@ -1,3 +1,4 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
@@ -10,7 +11,9 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import * as net from 'net';
+import { firstValueFrom } from 'rxjs';
 import { Server, Socket } from 'socket.io';
+import { gitlabEp, summaryEp } from 'src/common/server';
 import { Meeting } from 'src/meetings/entities/meeting.entity';
 import { Transcript } from 'src/transcripts/entities/transcript.entity';
 import { Users } from 'src/users/users.entity';
@@ -34,6 +37,8 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @InjectRepository(Meeting)
     private meetingRepository: Repository<Meeting>,
+
+    private readonly httpService: HttpService,
   ) {}
 
   @WebSocketServer() server: Server;
@@ -211,6 +216,27 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
             }
           }
         }
+
+        const res: any = await firstValueFrom(
+          this.httpService.post(gitlabEp, { trancription: content }),
+        ).catch((error) => {
+          this.logger.error('Error occurred:', error);
+          if (error.response) {
+            // Log the response data if available
+            this.logger.error('Response data:', error.response.data);
+          }
+        });
+
+        const gitlabData = res.data.issues || null;
+
+        // update transcript with gitlab data
+        await this.transcriptRepository
+          .update(trancript.id, {
+            gitlabData: gitlabData,
+          })
+          .catch((e) => {
+            this.logger.error(e);
+          });
       });
       this.sockets.set(recastedUserId, socket);
     } catch (e) {
