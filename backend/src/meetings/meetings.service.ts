@@ -84,7 +84,7 @@ export class MeetingsService {
   getOne(id: number) {
     return this.meetingRepository.findOne({
       where: { id },
-      relations: ['transcripts', 'room'],
+      relations: ['transcripts', 'room', 'transcripts.createdBy'],
     });
   }
 
