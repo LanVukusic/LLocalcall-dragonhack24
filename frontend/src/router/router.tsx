@@ -6,6 +6,7 @@ import { Register } from '../views/Register';
 import Room from '../views/Video';
 import { TranscriptView } from '../views/TrascriptView';
 import { MeetingView } from '../components/meeting/MeetingView';
+// import { MeetingView } from '../components/meeting/MeetingView';
 
 export const router = createBrowserRouter([
   {
@@ -22,7 +23,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/meeting/:meetingId/transcript',
-        element: <TranscriptView/>,
+        element: <TranscriptView />,
       },
       {
         path: '/meeting/:meetingId',

@@ -15,6 +15,7 @@ import { IconPlus } from '@tabler/icons-react';
 import { openTypedModal } from '../../mantine/modals/modals-utils';
 import { useNavigate } from 'react-router-dom';
 import { useRoomsControllerGetMeetings } from '../../api/rooms/rooms';
+import { $activeMeet } from '../../global-state/activeRoom';
 
 type MeetingProps = {
   meeting: Meeting;
@@ -43,9 +44,12 @@ const MeetingCard = ({ meeting }: MeetingProps) => {
       style={{ width: '100%' }}
       className={classes.meetingCard}
       onClick={() => {
-        meetingStatus === 'live'
-          ? redirect(`/meeting/${meeting.id}`)
-          : redirect(`/meeting/${meeting.id}/transcript`);
+        if (meetingStatus === 'live') {
+          $activeMeet.set(meeting);
+          redirect(`/video`);
+        } else {
+          redirect(`/meeting/${meeting.id}/transcript`);
+        }
       }}
     >
       <Stack>

@@ -9,6 +9,7 @@ import {
   Card,
   Flex,
   Group,
+  LoadingOverlay,
   Paper,
   ScrollArea,
   SimpleGrid,
@@ -22,6 +23,9 @@ import { useNavigate } from 'react-router-dom';
 import Peer from 'simple-peer/simplepeer.min.js';
 import { $currUser } from '../global-state/user';
 import { Streamer } from './audioStreamRecorder';
+import { $activeMeet } from '../global-state/activeRoom';
+import { useMeetingsControllerUpdate } from '../api/meetings/meetings';
+import { UpdateMeetingDtoStatus } from '../api/model';
 
 interface VideoProps {
   peer: Peer.Instance;
@@ -68,14 +72,28 @@ const Room = () => {
   // const params = useParams();
 
   // const roomID = (params.meetingId || '0').toString();
-
-  const roomID = 'dsa';
+  const selectedMeet = useStore($activeMeet);
 
   const user = useStore($currUser);
 
   const [transcripts, setTranscripts] = useState<Transcript[]>([]);
+  const { mutateAsync, isPending } = useMeetingsControllerUpdate();
+
+  const endMeeting = async () => {
+    confirm('Sure want to end the meeting?') &&
+      (await mutateAsync({
+        id: selectedMeet?.id.toString() || '',
+        data: {
+          status: UpdateMeetingDtoStatus.finished,
+        },
+      }));
+    redirect('/');
+  };
 
   useEffect(() => {
+    if (!selectedMeet) {
+      return;
+    }
     socketRef.current = io('http://142.93.161.127:3000');
     // socketRef.current = io('http://localhost:3000');
 
@@ -115,9 +133,9 @@ const Room = () => {
           return;
         }
 
-        console.log('Joining room', roomID);
+        console.log('Joining room', selectedMeet.id);
 
-        socketRef.current.emit('join room', roomID);
+        socketRef.current.emit('join room', selectedMeet.id);
 
         socketRef.current.on('all users', (users: string[]) => {
           const peers: Peer.Instance[] = [];
@@ -213,6 +231,10 @@ const Room = () => {
     peer.signal(incomingSignal);
 
     return peer;
+  }
+
+  if (selectedMeet == null) {
+    return <LoadingOverlay visible={true}></LoadingOverlay>;
   }
 
   return (
@@ -321,7 +343,7 @@ const Room = () => {
             onClick={() => {
               confirm(
                 'This will conclude the meeting and kick all participants. Continue?',
-              );
+              ) && endMeeting();
             }}
           >
             Finish meet
