@@ -259,24 +259,6 @@ const Room = () => {
 
         <ScrollArea h="100%" type="always" pt="sm">
           <Stack>
-            {/* <Stack>
-              {Array(20)
-                .fill(0)
-                .map((i, j) => (
-                  <Card key={i}>
-                    <Stack gap="xs">
-                      <Badge radius="sm" variant="light">
-                        Lan Vukusic
-                      </Badge>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Tempora optio doloremque est eius pariatur deserunt
-                      quisquam sunt provident debitis voluptatem vitae omnis
-                      molestias sed cumque dolorum ab laudantium, exercitationem
-                      excepturi?
-                    </Stack>
-                  </Card>
-                ))}
-            </Stack> */}
             {transcripts && transcripts.length == 0 && (
               <Stack>
                 <Skeleton height={8} mt={6} radius="xl" />
@@ -287,7 +269,7 @@ const Room = () => {
                 <Skeleton height={8} mt={6} width="70%" radius="xl" />
               </Stack>
             )}
-            {transcripts.map((transcript, index) => (
+            {/* {transcripts.map((transcript, index) => (
               <Card key={index}>
                 <div>
                   <strong>{transcript.username}</strong>
@@ -295,7 +277,7 @@ const Room = () => {
                   {transcript.content}
                 </div>
               </Card>
-            ))}
+            ))} */}
           </Stack>
         </ScrollArea>
       </Paper>
@@ -329,7 +311,7 @@ const Room = () => {
           <div>
             <Video key={index} peer={peer} />
             <Badge size="lg" ml="-50%" color="gray" variant="white">
-              {peer}
+              {JSON.stringify(peer, null, 2)}
             </Badge>
           </div>
         ))}
