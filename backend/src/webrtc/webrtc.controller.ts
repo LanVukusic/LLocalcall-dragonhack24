@@ -118,78 +118,94 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`User joined audio: ${user.username}`);
     this.socketIdToUser.set(client.id, recastedUserId);
 
-    const socket: net.Socket = net.createConnection(
-      this.freeConfigs[this.index % this.freeConfigs.length],
-      () => {
+    try {
+      const socket: net.Socket = net.createConnection(
+        this.freeConfigs[this.index % this.freeConfigs.length],
+        () => {
+          this.logger.log(
+            `Connected to server: ${this.freeConfigs[this.index % this.freeConfigs.length].port}`,
+          );
+        },
+      );
+
+      socket.on('error', (error) => {
+        // Handle socket errors
+        this.logger.error(`Socket error: ${error}`);
+        // Optionally, you can close the socket or take other actions here
+      });
+
+      socket.on('close', () => {
+        // Handle socket closure
+        this.logger.log('Socket closed');
+        // Optionally, you can perform cleanup or reconnection logic here
+      });
+
+      this.logger.log(`Index increased to ${this.index}`);
+
+      const startTime = new Date();
+
+      socket.on('data', async (data) => {
+        const c = data.toString().trim();
+
+        if (c.length < 2) {
+          return;
+        }
+
+        const splitted = c
+          .toString()
+          .replace(/[\u0000-\u001F]/g, '')
+          .split(' ');
+
+        const start = parseInt(splitted[0]);
+        const end = parseInt(splitted[1]);
+
+        const content = splitted.slice(2).join(' ');
+
+        if (isNaN(start) || isNaN(end)) {
+          return;
+        }
+
         this.logger.log(
-          `Connected to server: ${this.freeConfigs[this.index % this.freeConfigs.length].port}`,
+          `User: ${user.username}: ${start} <-> ${end} : ${content}`,
         );
-      },
-    );
 
-    this.logger.log(`Index increased to ${this.index}`);
+        const newStart = new Date(startTime.getTime() + start * 1000);
+        const newEnd = new Date(startTime.getTime() + end * 1000);
 
-    const startTime = new Date();
+        // get curremt roomId based on the socket
+        const roomId = this.socketToRoom[client.id];
 
-    socket.on('data', async (data) => {
-      const c = data.toString().trim();
+        let meeting: Meeting;
 
-      if (c.length < 2) {
-        return;
-      }
+        if (roomId) {
+          meeting = await this.meetingRepository.findOneOrFail({
+            where: { id: parseInt(roomId) },
+          });
+        }
 
-      const splitted = c
-        .toString()
-        .replace(/[\u0000-\u001F]/g, '')
-        .split(' ');
-
-      const start = parseInt(splitted[0]);
-      const end = parseInt(splitted[1]);
-
-      const content = splitted.slice(2).join(' ');
-
-      if (isNaN(start) || isNaN(end)) {
-        return;
-      }
-
-      this.logger.log(
-        `User: ${user.username}: ${start} <-> ${end} : ${content}`,
-      );
-
-      const newStart = new Date(startTime.getTime() + start * 1000);
-      const newEnd = new Date(startTime.getTime() + end * 1000);
-
-      // get curremt roomId based on the socket
-      const roomId = this.socketToRoom[client.id];
-
-      let meeting: Meeting;
-
-      if (roomId) {
-        meeting = await this.meetingRepository.findOneOrFail({
-          where: { id: parseInt(roomId) },
+        const trancript = await this.transcriptRepository.save({
+          start: newStart,
+          end: newEnd,
+          text: content,
+          createdBy: user,
+          meeting: meeting,
         });
-      }
 
-      const trancript = await this.transcriptRepository.save({
-        start: newStart,
-        end: newEnd,
-        text: content,
-        createdBy: user,
-        meeting: meeting,
+        this.logger.log(
+          `Transcript saved: text=${trancript.text}, meeting=${meeting?.id || 'NONE'}, user=${user.id}`,
+        );
+
+        client.emit('transcript', {
+          start,
+          end,
+          content,
+          username: user.username,
+        });
       });
-
-      this.logger.log(
-        `Transcript saved: text=${trancript.text}, meeting=${meeting?.id || 'NONE'}, user=${user.id}`,
-      );
-
-      client.emit('transcript', {
-        start,
-        end,
-        content,
-        username: user.username,
-      });
-    });
-    this.sockets.set(recastedUserId, socket);
+      this.sockets.set(recastedUserId, socket);
+    } catch (e) {
+      this.logger.error(e);
+    }
     this.index++;
   }
 
@@ -263,6 +279,10 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return;
     }
 
-    socket.write(data);
+    try {
+      socket.write(data);
+    } catch (e) {
+      this.logger.error(e);
+    }
   }
 }
