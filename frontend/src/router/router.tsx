@@ -28,10 +28,9 @@ export const router = createBrowserRouter([
         path: '/meeting/:meetingId',
         element: <MeetingView />,
       },
-
       {
-        path: '/video',
-        element: <Room match={{ params: { roomID: 'dsa' } }} />,
+        path: '/video/:meetingId',
+        element: <Room />,
       },
     ],
   },

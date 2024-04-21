@@ -5,8 +5,6 @@ import { SignalData } from 'simple-peer';
 
 import Peer from 'simple-peer/simplepeer.min.js';
 import { Streamer } from './audioStreamRecorder';
-import { useStore } from '@nanostores/react';
-import { $currUser } from '../global-state/user';
 import { Card, Flex, ScrollArea, Stack } from '@mantine/core';
 
 interface VideoProps {
@@ -37,14 +35,6 @@ interface PeerData {
   peer: Peer.Instance;
 }
 
-interface RoomProps {
-  match: {
-    params: {
-      roomID: string;
-    };
-  };
-}
-
 interface Transcript {
   start: number;
   end: number;
@@ -52,21 +42,31 @@ interface Transcript {
   username: string;
 }
 
-const Room: React.FC<RoomProps> = ({ match }) => {
+const Room = () => {
   const [peers, setPeers] = useState<Peer.Instance[]>([]);
   const socketRef = useRef<Socket>();
   const userVideo = useRef<HTMLVideoElement>(null);
   const peersRef = useRef<PeerData[]>([]);
-  const roomID = match.params.roomID;
-  const user = useStore($currUser);
+
+  // const params = useParams();
+
+  // const roomID = (params.meetingId || '0').toString();
+
+  const roomID = 'dsa';
+
+  // const user = useStore($currUser);
 
   const [transcripts, setTranscripts] = useState<Transcript[]>([]);
 
   useEffect(() => {
+    console.log('dasdsa');
+
     // socketRef.current = io('http://142.93.161.127:3000');
     socketRef.current = io('http://localhost:3000');
 
-    socketRef.current.emit('join audio', user?.sub);
+    // console.log(user?.sub);
+
+    socketRef.current.emit('join audio', '1');
 
     socketRef.current.on('transcript', (data: Transcript) => {
       setTranscripts((prev) => [...prev, data]);
@@ -88,15 +88,16 @@ const Room: React.FC<RoomProps> = ({ match }) => {
             stream,
             new AudioContext({ sampleRate: 16000 }),
             (data) => {
+              console.log('hjes');
               if (!socketRef.current) {
                 console.error('Socket not connected');
                 return;
               }
-
               socketRef.current.emit('audio', data);
             },
           );
         }
+
         if (!socketRef.current) {
           console.error('Socket not connected');
           return;
@@ -149,6 +150,8 @@ const Room: React.FC<RoomProps> = ({ match }) => {
           },
         );
 
+        console.log('Listening for signals');
+
         socketRef.current.on(
           'receiving returned signal',
           (payload: { id: string; signal: SignalData }) => {
@@ -159,7 +162,7 @@ const Room: React.FC<RoomProps> = ({ match }) => {
           },
         );
       });
-  }, [roomID]);
+  }, []);
 
   function createPeer(
     userToSignal: string,
