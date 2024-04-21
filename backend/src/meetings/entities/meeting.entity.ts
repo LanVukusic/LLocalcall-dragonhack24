@@ -44,6 +44,9 @@ export class Meeting {
   @OneToMany(() => Transcript, (transcript) => transcript.meeting)
   transcripts: Transcript[];
 
+  @Column({ type: 'text', nullable: true })
+  summary: string;
+
   @ManyToOne(() => Room)
   @JoinColumn()
   room: Room;

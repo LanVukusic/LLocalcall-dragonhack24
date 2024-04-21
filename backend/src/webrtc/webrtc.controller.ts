@@ -85,8 +85,10 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (this.socketIdToUser.has(client.id)) {
       const userId = this.socketIdToUser.get(client.id);
 
-      this.sockets.get(userId).end();
-      this.sockets.delete(userId);
+      if (this.sockets.has(userId)) {
+        this.sockets.get(userId).end();
+        this.sockets.delete(userId);
+      }
       this.socketIdToUser.delete(client.id);
     }
 
@@ -157,12 +159,28 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const newStart = new Date(startTime.getTime() + start * 1000);
       const newEnd = new Date(startTime.getTime() + end * 1000);
 
-      await this.transcriptRepository.save({
+      // get curremt roomId based on the socket
+      const roomId = this.socketToRoom[client.id];
+
+      let meeting: Meeting;
+
+      if (roomId) {
+        meeting = await this.meetingRepository.findOneOrFail({
+          where: { id: parseInt(roomId) },
+        });
+      }
+
+      const trancript = await this.transcriptRepository.save({
         start: newStart,
         end: newEnd,
         text: content,
         createdBy: user,
+        meeting: meeting,
       });
+
+      this.logger.log(
+        `Transcript saved: text=${trancript.text}, meeting=${meeting.id}, user=${user.id}`,
+      );
 
       client.emit('transcript', {
         start,
