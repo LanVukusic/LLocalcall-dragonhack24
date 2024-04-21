@@ -4,3 +4,7 @@ export type UserRequest = {
   iat: number;
   exp: number;
 };
+
+export interface RequestWithUAT extends Request {
+  user: UserRequest;
+}

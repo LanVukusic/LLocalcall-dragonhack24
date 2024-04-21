@@ -4,7 +4,7 @@ import {
   Column,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -16,11 +16,17 @@ export class Transcript {
   @Column()
   text: string;
 
-  @OneToOne(() => Users)
+  @ManyToOne(() => Users)
   @JoinColumn()
   createdBy: Users;
 
-  @OneToOne(() => Meeting)
+  @Column()
+  start: Date;
+
+  @Column()
+  end: Date;
+
+  @ManyToOne(() => Meeting)
   @JoinColumn()
   meeting: Meeting;
 }

@@ -15,10 +15,11 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconCircleKey } from '@tabler/icons-react';
-import { useAuthControllerSignUp } from '../api/default/default';
+
 import { $currUser } from '../global-state/user';
 import { useStore } from '@nanostores/react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, redirect } from 'react-router-dom';
+import { useAuthControllerSignUp } from '../api/auth/auth';
 
 export function Register() {
   const { mutateAsync, isPending, error } = useAuthControllerSignUp();
@@ -30,13 +31,13 @@ export function Register() {
       password: '',
     },
 
-    validate: {
-      username: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-    },
+    // validate: {
+    //   username: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+    // },
   });
 
   if (user != null) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   return (
@@ -72,12 +73,13 @@ export function Register() {
                     username: values.username,
                     password: values.password,
                   },
-                }).then((user) => {
-                  $currUser.set({
-                    name: user.username,
-                    transcripts: user.transcripts,
-                    token: '', // user.token
-                  });
+                }).then(() => {
+                  redirect('/login'); // TODO: NEDELA
+                  // $currUser.set({
+                  //   name: user.username,
+                  //   transcripts: user.transcripts,
+                  //   token: user.token || '',
+                  // });
                 });
               })}
             >

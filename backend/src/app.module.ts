@@ -4,7 +4,6 @@ import { DatabaseModule } from './database/database.module';
 import { EnvModule } from './env/env.module';
 import { MeetingsModule } from './meetings/meetings.module';
 import { RoomsModule } from './rooms/rooms.module';
-import { TranscriptsModule } from './transcripts/transcripts.module';
 import { UsersModule } from './users/users.module';
 import { ConnectorsModule } from './connectors/connectors.module';
 import { WebrtcModule } from './webrtc/webrtc.module';
@@ -17,7 +16,6 @@ import { WebrtcModule } from './webrtc/webrtc.module';
     DatabaseModule,
     RoomsModule,
     MeetingsModule,
-    TranscriptsModule,
     ConnectorsModule,
     WebrtcModule,
   ],
