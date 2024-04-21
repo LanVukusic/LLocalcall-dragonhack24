@@ -8,7 +8,6 @@ import {
   LoadingOverlay,
   Container,
   Button,
-  Box,
 } from '@mantine/core'; // Assuming you're using Mantine
 import classes from './MeetingList.module.css';
 import { Meeting, Room } from '../../api/model';
@@ -34,7 +33,7 @@ const MeetingCard = ({ meeting }: MeetingProps) => {
   } else {
     status = <Badge color="green">Scheduled</Badge>;
   }
-  // console.log(meeting);
+
   return (
     <Card
       shadow="md"

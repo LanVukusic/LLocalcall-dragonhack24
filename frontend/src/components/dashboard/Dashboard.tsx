@@ -1,4 +1,4 @@
-import { Alert, Flex, ScrollArea, Stack } from '@mantine/core';
+import { Alert, Container, Flex, ScrollArea, Stack } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { SideBar } from '../sidebar/SideBar';
 import { useState } from 'react';
@@ -35,17 +35,17 @@ export const DashBoard = () => {
         refetch={refetch}
       />
 
-      <Stack w="100%" py="md">
-        <ScrollArea h="100%" type="always" w="100%">
-          {selectedRoom ? (
-            <MeetingsList room={selectedRoom} />
-          ) : (
+      <ScrollArea h="100%" type="always" w="100%">
+        {selectedRoom ? (
+          <MeetingsList room={selectedRoom} />
+        ) : (
+          <Container w="100%" h="100%" pt="xl">
             <Alert title="No rooms seleted">
               Open the sidebar and select a room
             </Alert>
-          )}
-        </ScrollArea>
-      </Stack>
+          </Container>
+        )}
+      </ScrollArea>
     </Flex>
   );
 };

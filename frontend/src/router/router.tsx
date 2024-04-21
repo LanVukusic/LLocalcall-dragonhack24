@@ -28,11 +28,11 @@ export const router = createBrowserRouter([
         path: '/meeting/:meetingId',
         element: <MeetingView />,
       },
-      {
-        path: '/video',
-        element: <Room />,
-      },
     ],
+  },
+  {
+    path: '/video',
+    element: <Room />,
   },
   {
     path: '/login',

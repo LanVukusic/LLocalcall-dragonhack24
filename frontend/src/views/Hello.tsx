@@ -1,4 +1,4 @@
-import { Stack } from '@mantine/core';
+import { Box, Stack } from '@mantine/core';
 import { Navbar } from '../components/navbar/Navbar';
 
 import { Outlet } from 'react-router-dom';
@@ -8,9 +8,11 @@ import { Outlet } from 'react-router-dom';
 
 function App() {
   return (
-    <Stack style={{ height: '100vh' }} gap="0">
+    <Stack style={{ height: '100vh', overflow: 'hidden' }} gap="0">
       <Navbar />
-      <Outlet />
+      <Box h="100%" style={{ overflow: 'hidden' }}>
+        <Outlet />
+      </Box>
       {/* <Footer/> */}
     </Stack>
   );

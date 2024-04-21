@@ -5,9 +5,35 @@ import { SignalData } from 'simple-peer';
 
 import Peer from 'simple-peer/simplepeer.min.js';
 import { Streamer } from './audioStreamRecorder';
-import { Card, Flex, ScrollArea, Stack } from '@mantine/core';
+import {
+  Alert,
+  Text,
+  Badge,
+  Box,
+  Button,
+  Card,
+  Center,
+  Container,
+  Flex,
+  Grid,
+  Group,
+  Paper,
+  ScrollArea,
+  SimpleGrid,
+  Skeleton,
+  Stack,
+  Title,
+} from '@mantine/core';
 import { useStore } from '@nanostores/react';
 import { $currUser } from '../global-state/user';
+import {
+  IconCalendarCheck,
+  IconCheck,
+  IconNotebook,
+  IconWriting,
+  IconWritingSign,
+} from '@tabler/icons-react';
+import { useNavigate } from 'react-router-dom';
 
 interface VideoProps {
   peer: Peer.Instance;
@@ -49,6 +75,7 @@ const Room = () => {
   const socketRef = useRef<Socket>();
   const userVideo = useRef<HTMLVideoElement>(null);
   const peersRef = useRef<PeerData[]>([]);
+  const redirect = useNavigate();
 
   // const params = useParams();
 
@@ -61,8 +88,8 @@ const Room = () => {
   const [transcripts, setTranscripts] = useState<Transcript[]>([]);
 
   useEffect(() => {
-    // socketRef.current = io('http://142.93.161.127:3000');
-    socketRef.current = io('http://localhost:3000');
+    socketRef.current = io('http://142.93.161.127:3000');
+    // socketRef.current = io('http://localhost:3000');
 
     socketRef.current.emit('join audio', user?.sub);
 
@@ -201,28 +228,119 @@ const Room = () => {
   }
 
   return (
-    <Flex direction="column" gap="md" w="100%">
-      <Stack maw="300px">
-        <video muted ref={userVideo} autoPlay playsInline />
-        {peers.map((peer, index) => (
-          <Video key={index} peer={peer} />
-        ))}
-      </Stack>
+    <SimpleGrid w="100%" h="100%" cols={3} p="sm" bg="gray.1">
+      <Paper
+        h="100%"
+        withBorder
+        shadow="xl"
+        p="md"
+        style={{ overflow: 'hidden' }}
+      >
+        <Group>
+          <IconNotebook opacity={0.5} size="1.8rem" />
+          <Title> Transcriptions </Title>
+        </Group>
 
-      <ScrollArea h="500px">
-        <Stack>
-          {transcripts.map((transcript, index) => (
-            <Card key={index}>
-              <div>
-                <strong>{transcript.username}</strong>
-                <br />
-                {transcript.content}
-              </div>
-            </Card>
-          ))}
-        </Stack>
-      </ScrollArea>
-    </Flex>
+        <ScrollArea h="100%" type="always" pt="sm">
+          <Stack>
+            {/* <Stack>
+              {Array(20)
+                .fill(0)
+                .map((i, j) => (
+                  <Card key={i}>
+                    <Stack gap="xs">
+                      <Badge radius="sm" variant="light">
+                        Lan Vukusic
+                      </Badge>
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Tempora optio doloremque est eius pariatur deserunt
+                      quisquam sunt provident debitis voluptatem vitae omnis
+                      molestias sed cumque dolorum ab laudantium, exercitationem
+                      excepturi?
+                    </Stack>
+                  </Card>
+                ))}
+            </Stack> */}
+            {transcripts && transcripts.length == 0 && (
+              <Stack>
+                <Skeleton height={8} mt={6} radius="xl" />
+                <Skeleton height={8} mt={6} width="70%" radius="xl" />
+                <Skeleton height={8} mt={6} width="90%" radius="xl" />
+                <Skeleton height={8} mt={6} radius="xl" />
+                <Skeleton height={8} mt={6} width="70%" radius="xl" />
+                <Skeleton height={8} mt={6} width="70%" radius="xl" />
+              </Stack>
+            )}
+            {transcripts.map((transcript, index) => (
+              <Card key={index}>
+                <div>
+                  <strong>{transcript.username}</strong>
+                  <br />
+                  {transcript.content}
+                </div>
+              </Card>
+            ))}
+          </Stack>
+        </ScrollArea>
+      </Paper>
+
+      <Flex
+        justify="center"
+        align="center"
+        wrap="wrap"
+        style={{
+          gridColumnStart: 2,
+          gridColumnEnd: 4,
+        }}
+      >
+        <div>
+          <video
+            muted
+            ref={userVideo}
+            autoPlay
+            playsInline
+            style={{
+              borderRadius: '5px',
+              border: '1px solid --mantine-color-gray-1',
+            }}
+          />
+          <Badge size="lg" ml="-50%" color="gray" variant="white">
+            You
+          </Badge>
+        </div>
+
+        {peers.map((peer, index) => (
+          <div>
+            <Video key={index} peer={peer} />
+            <Badge size="lg" ml="-50%" color="gray" variant="white">
+              {peer}
+            </Badge>
+          </div>
+        ))}
+        <Group w="100%" mt="auto" mb="xl">
+          <Button
+            variant="subtle"
+            color="red"
+            onClick={() => {
+              redirect('/');
+            }}
+          >
+            Leave
+          </Button>
+          <Button
+            variant="light"
+            rightSection={<IconCalendarCheck />}
+            onClick={() => {
+              confirm(
+                'This will conclude the meeting and kick all participants. Continue?',
+              );
+            }}
+          >
+            Finish meet
+          </Button>
+        </Group>
+      </Flex>
+    </SimpleGrid>
   );
 };
 
