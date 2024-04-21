@@ -11,6 +11,7 @@ import type { Meeting } from './meeting';
 export interface Transcript {
   createdBy: Users;
   end: string;
+  gitlabData?: string;
   id: number;
   meeting: Meeting;
   start: string;
