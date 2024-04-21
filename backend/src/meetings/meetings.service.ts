@@ -24,6 +24,8 @@ export class MeetingsService {
         duration: updateMeetingDto.duration,
         name: updateMeetingDto.name,
         startTime: updateMeetingDto.startTime,
+        endTime: updateMeetingDto.endTime,
+        status: updateMeetingDto.status,
       },
     );
   }

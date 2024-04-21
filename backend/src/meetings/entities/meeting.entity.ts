@@ -21,7 +21,7 @@ export class Meeting {
     enum: Status,
     nullable: false,
   })
-  service: Status;
+  status: Status;
 
   @PrimaryGeneratedColumn()
   id: number;

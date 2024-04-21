@@ -25,21 +25,21 @@ export const Navbar = () => {
     <Box w="100%" p="sm">
       <Paper w="100%" withBorder shadow="sm">
         <Group justify="space-between" m="0" p="sm" w="100%">
-          <Title
-            order={1}
-            size="1.5rem"
-            fw="bold"
-            style={{
-              fontFamily: 'monospace',
-            }}
-          >
-            LLocal - Call
-          </Title>
+          <Group>
+            <img src="/Icon.svg" width="40px"></img>
+            <Title order={1} size="1.5rem" fw="black">
+              LLocalCaLL
+            </Title>
+          </Group>
           <Popover width={200} position="bottom" withArrow shadow="md">
             <Popover.Target>
               <Button
                 variant="subtle"
-                leftSection={<Avatar size={30}>{user?.name[0]}</Avatar>}
+                leftSection={
+                  <Avatar size={30} radius="sm">
+                    {user?.name[0]}
+                  </Avatar>
+                }
               >
                 {user?.name}
               </Button>
