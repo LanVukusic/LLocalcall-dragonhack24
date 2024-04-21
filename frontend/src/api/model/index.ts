@@ -12,7 +12,6 @@ export * from './createMeetingDto';
 export * from './createRoomDto';
 export * from './createTranscriptDto';
 export * from './meeting';
-export * from './meetingService';
 export * from './meetingStatus';
 export * from './room';
 export * from './roomsControllerCreate201';
