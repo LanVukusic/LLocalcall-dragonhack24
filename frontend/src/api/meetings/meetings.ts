@@ -5,18 +5,25 @@
  * WIP
  * OpenAPI spec version: 1.0
  */
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type {
   MutationFunction,
+  QueryFunction,
+  QueryKey,
   UseMutationOptions,
   UseMutationResult,
+  UseQueryOptions,
+  UseQueryResult,
 } from '@tanstack/react-query';
-import type { UpdateMeetingDto } from '.././model';
+import type { Transcript, UpdateMeetingDto } from '.././model';
 import { customInstance } from '.././mutator/custom-instance';
 import type { ErrorType, BodyType } from '.././mutator/custom-instance';
 
 type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
 
+/**
+ * @summary Get all meetings
+ */
 export const meetingsControllerUpdate = (
   id: string,
   updateMeetingDto: BodyType<UpdateMeetingDto>,
@@ -70,6 +77,9 @@ export type MeetingsControllerUpdateMutationResult = NonNullable<
 export type MeetingsControllerUpdateMutationBody = BodyType<UpdateMeetingDto>;
 export type MeetingsControllerUpdateMutationError = ErrorType<unknown>;
 
+/**
+ * @summary Get all meetings
+ */
 export const useMeetingsControllerUpdate = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -91,6 +101,9 @@ export const useMeetingsControllerUpdate = <
 
   return useMutation(mutationOptions);
 };
+/**
+ * @summary Delete a meeting by id
+ */
 export const meetingsControllerRemove = (
   id: string,
   options?: SecondParameter<typeof customInstance>,
@@ -138,6 +151,9 @@ export type MeetingsControllerRemoveMutationResult = NonNullable<
 
 export type MeetingsControllerRemoveMutationError = ErrorType<unknown>;
 
+/**
+ * @summary Delete a meeting by id
+ */
 export const useMeetingsControllerRemove = <
   TError = ErrorType<unknown>,
   TContext = unknown,
@@ -158,4 +174,97 @@ export const useMeetingsControllerRemove = <
   const mutationOptions = getMeetingsControllerRemoveMutationOptions(options);
 
   return useMutation(mutationOptions);
+};
+/**
+ * @summary Get all transcripts for a meeting
+ */
+export const meetingsControllerGetTranscripts = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Transcript[]>(
+    { url: `/meetings/${id}/transcripts`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getMeetingsControllerGetTranscriptsQueryKey = (id: string) => {
+  return [`/meetings/${id}/transcripts`] as const;
+};
+
+export const getMeetingsControllerGetTranscriptsQueryOptions = <
+  TData = Awaited<ReturnType<typeof meetingsControllerGetTranscripts>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof meetingsControllerGetTranscripts>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getMeetingsControllerGetTranscriptsQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof meetingsControllerGetTranscripts>>
+  > = ({ signal }) =>
+    meetingsControllerGetTranscripts(id, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof meetingsControllerGetTranscripts>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type MeetingsControllerGetTranscriptsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof meetingsControllerGetTranscripts>>
+>;
+export type MeetingsControllerGetTranscriptsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get all transcripts for a meeting
+ */
+export const useMeetingsControllerGetTranscripts = <
+  TData = Awaited<ReturnType<typeof meetingsControllerGetTranscripts>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof meetingsControllerGetTranscripts>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+  const queryOptions = getMeetingsControllerGetTranscriptsQueryOptions(
+    id,
+    options,
+  );
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
 };

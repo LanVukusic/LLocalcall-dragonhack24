@@ -6,13 +6,16 @@
  * OpenAPI spec version: 1.0
  */
 import type { Room } from './room';
+import type { MeetingStatus } from './meetingStatus';
 import type { Transcript } from './transcript';
 
 export interface Meeting {
   duration: number;
+  endTime?: string;
   id: number;
   name: string;
   room: Room;
   startTime: string;
+  status: MeetingStatus;
   transcripts: Transcript[];
 }
