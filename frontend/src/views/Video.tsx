@@ -80,15 +80,16 @@ const Room = () => {
   const { mutateAsync, isPending } = useMeetingsControllerUpdate();
 
   const endMeeting = async () => {
-    confirm('Sure want to end the meeting?') &&
-      (await mutateAsync({
+    if (confirm('Sure want to end the meeting?')) {
+      await mutateAsync({
         id: selectedMeet?.id.toString() || '',
         data: {
           status: UpdateMeetingDtoStatus.finished,
         },
-      }),
-      socketRef.current?.close(),
-      redirect('/'));
+      });
+      socketRef.current?.close();
+      redirect('/');
+    }
   };
 
   useEffect(() => {

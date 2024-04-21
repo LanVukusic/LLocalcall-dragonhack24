@@ -17,5 +17,6 @@ export interface Meeting {
   room: Room;
   startTime: string;
   status: MeetingStatus;
+  summary: string;
   transcripts: Transcript[];
 }
