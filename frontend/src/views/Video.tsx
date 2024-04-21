@@ -7,6 +7,7 @@ import {
   Badge,
   Button,
   Card,
+  Container,
   Flex,
   Group,
   LoadingOverlay,
@@ -95,6 +96,8 @@ const Room = () => {
   useEffect(() => {
     if (!selectedMeet) {
       return;
+    } else {
+      console.log({ selectedMeet });
     }
     socketRef.current = io('http://142.93.161.127:3000');
     // socketRef.current = io('http://localhost:3000');
@@ -154,10 +157,10 @@ const Room = () => {
             });
 
             console.log(peersRef.current.length);
-
             peers.push(peer);
           });
           setPeers(peers);
+          console.log(peers[0]);
         });
 
         socketRef.current.on(
@@ -269,7 +272,7 @@ const Room = () => {
                 <Skeleton height={8} mt={6} width="70%" radius="xl" />
               </Stack>
             )}
-            {/* {transcripts.map((transcript, index) => (
+            {transcripts.map((transcript, index) => (
               <Card key={index}>
                 <div>
                   <strong>{transcript.username}</strong>
@@ -277,7 +280,7 @@ const Room = () => {
                   {transcript.content}
                 </div>
               </Card>
-            ))} */}
+            ))}
           </Stack>
         </ScrollArea>
       </Paper>
@@ -291,6 +294,17 @@ const Room = () => {
           gridColumnEnd: 4,
         }}
       >
+        <Group w="100%" mt="auto" mb="xl" justify="end">
+          <Container w="100%">
+            <Stack gap="xs">
+              <Title>{selectedMeet.name}</Title>
+              <Title order={4} c="violet">
+                {new Date(selectedMeet.startTime).toLocaleDateString()}
+              </Title>
+            </Stack>
+          </Container>
+        </Group>
+
         <div>
           <video
             muted
@@ -308,10 +322,10 @@ const Room = () => {
         </div>
 
         {peers.map((peer, index) => (
-          <div>
-            <Video key={index} peer={peer} />
+          <div key={index}>
+            <Video peer={peer} />
             <Badge size="lg" ml="-50%" color="gray" variant="white">
-              {JSON.stringify(peer, null, 2)}
+              {/* {JSON.stringify(peer, null, 2)} */}
             </Badge>
           </div>
         ))}
