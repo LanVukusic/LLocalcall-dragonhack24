@@ -31,9 +31,9 @@ export function Register() {
       password: '',
     },
 
-    validate: {
-      username: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-    },
+    // validate: {
+    //   username: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+    // },
   });
 
   if (user != null) {

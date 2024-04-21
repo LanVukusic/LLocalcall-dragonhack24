@@ -31,9 +31,9 @@ export function Authentication() {
       password: '',
     },
 
-    validate: {
-      username: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-    },
+    // validate: {
+    //   username: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+    // },
   });
 
   const user = useStore($currUser);

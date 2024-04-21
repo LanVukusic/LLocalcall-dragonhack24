@@ -20,6 +20,12 @@ export class Transcript {
   @JoinColumn()
   createdBy: Users;
 
+  @Column()
+  start: Date;
+
+  @Column()
+  end: Date;
+
   @OneToOne(() => Meeting)
   @JoinColumn()
   meeting: Meeting;
