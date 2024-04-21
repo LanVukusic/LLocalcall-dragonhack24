@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Card,
   Grid,
@@ -76,17 +76,13 @@ const attendees = [
 
 interface MeetingProps {
   meetingId: number;
-  setSelectedMeetingId: React.Dispatch<React.SetStateAction<number | null>>;
+  setSelectedMeetingId: (meetingId: number) => void;
 }
 
-const Meeting = ({ meetingId, setSelectedMeetingId }: MeetingProps) => {
+export const MeetingView = ({ meetingId, setSelectedMeetingId }: MeetingProps) => {
   // const [gridSize, setGridSize] = useState(2); // Initial grid size (2x2)
   console.log(meetingId);
-  //   const toggleGridSize = () => {
-  //     setGridSize((prevSize) => (prevSize === 2 ? 1 : 2));
-  //   };
 
-  // load meeting based on meetingId
   
 
   const [cameraStatus, setCameraStatus] = useState(true); // Camera on by default
@@ -100,7 +96,7 @@ const Meeting = ({ meetingId, setSelectedMeetingId }: MeetingProps) => {
   };
 
   return (
-    <Stack mt="40">
+    <Stack mt="40" pb="lg" mx="lg">
       <Grid grow pb="md" gutter="xs">
         {attendees.map((attendee) => (
           <Grid.Col key={attendee.id} span={4}>
@@ -139,7 +135,7 @@ const Meeting = ({ meetingId, setSelectedMeetingId }: MeetingProps) => {
         <Button
           variant="light"
           onClick={() => {
-            setSelectedMeetingId(null);
+            setSelectedMeetingId(-1);
           }}
         >
           Leave Meeting
@@ -149,4 +145,4 @@ const Meeting = ({ meetingId, setSelectedMeetingId }: MeetingProps) => {
   );
 };
 
-export default Meeting;
+

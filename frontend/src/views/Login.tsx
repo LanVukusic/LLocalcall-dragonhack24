@@ -15,10 +15,11 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconCircleKey } from '@tabler/icons-react';
-import { useAuthControllerSignIn } from '../api/default/default';
+
 import { useStore } from '@nanostores/react';
 import { Navigate } from 'react-router-dom';
 import { $currUser } from '../global-state/user';
+import { useAuthControllerSignIn } from '../api/auth/auth';
 
 export function Authentication() {
   const { mutateAsync, isPending, error } = useAuthControllerSignIn();
