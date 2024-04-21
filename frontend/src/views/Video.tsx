@@ -54,6 +54,9 @@ const Room: React.FC<RoomProps> = ({ match }) => {
     // socketRef.current = io('http://142.93.161.127:3000');
     socketRef.current = io('http://localhost:3000');
 
+    // TODO
+    socketRef.current.emit('join room', 0);
+
     navigator.mediaDevices
       .getUserMedia({
         video: videoConstraints,
@@ -65,8 +68,6 @@ const Room: React.FC<RoomProps> = ({ match }) => {
       .then((stream) => {
         if (userVideo.current) {
           userVideo.current.srcObject = stream;
-
-          console.log(stream.getAudioTracks()[0].getSettings());
 
           new Streamer(
             stream,

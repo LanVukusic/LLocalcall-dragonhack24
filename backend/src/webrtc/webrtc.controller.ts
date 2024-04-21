@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import {
   ConnectedSocket,
   MessageBody,
@@ -10,6 +11,8 @@ import {
 } from '@nestjs/websockets';
 import * as net from 'net';
 import { Server, Socket } from 'socket.io';
+import { Users } from 'src/users/users.entity';
+import { Repository } from 'typeorm';
 
 const host = '142.93.161.127';
 
@@ -20,6 +23,11 @@ const host = '142.93.161.127';
 })
 @Injectable()
 export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  constructor(
+    @InjectRepository(Users)
+    private userRepository: Repository<Users>,
+  ) {}
+
   @WebSocketServer() server: Server;
   private logger: Logger = new Logger('AppGateway');
 
@@ -47,7 +55,11 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private index = 0;
 
-  private sockets = new Map<string, net.Socket>();
+  // maps user id -> socket
+  private sockets = new Map<number, net.Socket>();
+
+  // maps session id -> user id
+  private socketIdToUser = new Map<string, number>();
 
   handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`);
@@ -56,6 +68,45 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.emit('room full');
       return;
     }
+
+    return;
+  }
+
+  handleDisconnect(client: Socket) {
+    const roomID = this.socketToRoom[client.id];
+
+    if (this.socketIdToUser.has(client.id)) {
+      const userId = this.socketIdToUser.get(client.id);
+
+      this.sockets.get(userId).end();
+      this.sockets.delete(userId);
+      this.socketIdToUser.delete(client.id);
+    }
+
+    if (roomID) {
+      this.users[roomID] = this.users[roomID].filter((id) => id !== client.id);
+      if (this.users[roomID].length === 0) {
+        delete this.users[roomID];
+      }
+      delete this.socketToRoom[client.id];
+      this.logger.log(`Client disconnected: ${client.id}`);
+    }
+  }
+
+  @SubscribeMessage('join audio')
+  async handleJoinAudio(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() userId: string,
+  ) {
+    const recastedUserId = parseInt(userId);
+
+    const user = await this.userRepository.findOneOrFail({
+      where: { id: recastedUserId },
+    });
+
+    this.logger.log(`User joined audio: ${user.username}`);
+
+    this.socketIdToUser.set(client.id, recastedUserId);
 
     const socket: net.Socket = net.createConnection(
       this.freeConfigs[this.index],
@@ -67,42 +118,31 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
 
     socket.on('data', (data) => {
-      if (data.length < 2) {
+      console.log('data', data.toString());
+      console.log('length', data.toString().trim().length);
+
+      const c = data.toString().trim();
+
+      if (c.length < 2) {
         return;
       }
 
-      const splitted = data.toString().split(' ');
+      const splitted = c.toString().split(' ');
 
       const start = parseInt(splitted[0]);
       const end = parseInt(splitted[1]);
 
       const allElse = splitted.slice(2).join(' ');
 
+      if (isNaN(start) || isNaN(end)) {
+        return;
+      }
+
       console.log('start', start, 'end', end, 'allElse', allElse);
     });
 
-    this.sockets.set(client.id, socket);
+    this.sockets.set(recastedUserId, socket);
     this.index++;
-  }
-
-  handleDisconnect(client: Socket) {
-    const roomID = this.socketToRoom[client.id];
-
-    if (this.sockets.has(client.id)) {
-      this.sockets.get(client.id).destroy();
-      this.sockets.delete(client.id);
-
-      this.index--;
-    }
-
-    if (roomID) {
-      this.users[roomID] = this.users[roomID].filter((id) => id !== client.id);
-      if (this.users[roomID].length === 0) {
-        delete this.users[roomID];
-      }
-      delete this.socketToRoom[client.id];
-      this.logger.log(`Client disconnected: ${client.id}`);
-    }
   }
 
   @SubscribeMessage('join room')
@@ -163,7 +203,13 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleAudio(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
     const clientId = client.id;
 
-    const socket = this.sockets.get(clientId);
+    if (!this.socketIdToUser.has(clientId)) {
+      return;
+    }
+
+    const userId = this.socketIdToUser.get(clientId);
+
+    const socket = this.sockets.get(userId);
 
     if (!socket) {
       return;
