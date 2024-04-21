@@ -23,7 +23,7 @@ export class MeetingsService {
   getTranscripts(id: number) {
     return this.transcriptRepository.find({
       where: { meeting: { id } },
-      relations: ['transcripts.createdBy'],
+      relations: ['createdBy'],
     });
   }
 
