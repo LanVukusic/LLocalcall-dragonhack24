@@ -1,10 +1,11 @@
-import { Flex, ScrollArea, Stack } from '@mantine/core';
+import { Alert, Flex, ScrollArea, Stack } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { SideBar } from '../sidebar/SideBar';
 import { useState } from 'react';
 import { MeetingsList } from '../meetingList/MeetingList';
 
 import { useRoomsControllerFindAll } from '../../api/rooms/rooms';
+import { Room } from '../../api/model';
 
 export const DashBoard = () => {
   const [opened, handlers] = useDisclosure(false);
@@ -14,9 +15,7 @@ export const DashBoard = () => {
     refetch,
   } = useRoomsControllerFindAll();
 
-  const [selectedRoomId, setSelectedRoom] = useState<number | null>(
-    rooms && rooms[0].id ? rooms[0].id : null,
-  );
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
   return (
     <Flex
@@ -28,7 +27,7 @@ export const DashBoard = () => {
       <SideBar
         opened={opened}
         handlers={handlers}
-        selectedRoom={selectedRoomId || -1}
+        selectedRoom={selectedRoom?.id || 0}
         setSelectedRoom={setSelectedRoom}
         loadingRooms={loadingRooms}
         rooms={rooms}
@@ -37,12 +36,13 @@ export const DashBoard = () => {
 
       <Stack w="100%" py="md">
         <ScrollArea h="100%" type="always" w="100%">
-          <MeetingsList roomId={selectedRoomId || 0} />
-          {/*                 
-              // <MeetingView
-              //   meetingId={selectedMeetingId || -1}
-              //   setSelectedMeetingId={setSelectedMeetingId}
-              // /> */}
+          {selectedRoom ? (
+            <MeetingsList room={selectedRoom} />
+          ) : (
+            <Alert title="No rooms seleted">
+              Open the sidebar and select a room
+            </Alert>
+          )}
         </ScrollArea>
       </Stack>
     </Flex>

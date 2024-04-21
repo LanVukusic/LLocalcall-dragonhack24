@@ -4,8 +4,8 @@ import {
   Button,
   Group,
   LoadingOverlay,
+  NavLink,
   Stack,
-  Text,
   Title,
 } from '@mantine/core';
 import { IconMenu } from '@tabler/icons-react';
@@ -20,7 +20,7 @@ type SideBarProps = {
     readonly toggle: () => void;
   };
   selectedRoom: number | null;
-  setSelectedRoom: (room: number) => void;
+  setSelectedRoom: (room: Room) => void;
   loadingRooms: boolean;
   rooms: Room[] | undefined;
   refetch: () => void;
@@ -35,10 +35,6 @@ export const SideBar = ({
   rooms,
   refetch,
 }: SideBarProps) => {
-  const setRoom = (roomId: number) => {
-    setSelectedRoom(roomId);
-  };
-
   return (
     <Stack
       h="100%"
@@ -58,7 +54,6 @@ export const SideBar = ({
           <Group justify="space-between" w="100%" h="100%">
             <Stack w="100%" h="100%">
               <Group align="center" justify="space-between" w="100%">
-                {/* <IconDoor size={20} style={{ textAlign: 'center' }} /> */}
                 <Title order={2} c="teal.6">
                   Rooms
                 </Title>
@@ -69,18 +64,12 @@ export const SideBar = ({
               {rooms &&
                 rooms.map((room) => {
                   return (
-                    <Text
+                    <NavLink
                       key={room.id}
-                      ml="20"
-                      m="5"
-                      onClick={() => setRoom(room.id)}
-                      style={{
-                        fontWeight:
-                          selectedRoom === room.id ? 'bold' : 'normal',
-                      }}
-                    >
-                      {room.name}
-                    </Text>
+                      label={room.name}
+                      active={selectedRoom === room.id}
+                      onClick={() => setSelectedRoom(room)}
+                    />
                   );
                 })}
 
