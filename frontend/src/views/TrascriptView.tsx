@@ -13,15 +13,21 @@ import {
 
 import { Meeting, Transcript } from '../api/model';
 import { IconCornerDownRight, IconExternalLink } from '@tabler/icons-react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { useMeetingsControllerGetTranscripts } from '../api/meetings/meetings';
 
 export const TranscriptView = () => {
-  // const { transcriptId } = useParams();
+  const { meetingId } = useParams();
   // const { data, isLoading, error } = useTranscriptsControllerFindOne(
   //   transcriptId || '',
   // );
 
-  // const { transcripts, isLoading, error } = useTranscriptsControllerFindAll();
+  const { data, isLoading, error } = useMeetingsControllerGetTranscripts(
+    meetingId || '', // meetingId
+  );
+
+  // console.log();
+  // console.log('transcript data: ' + data);
 
   const meet: Meeting = {
     id: 1,
@@ -150,10 +156,10 @@ export const TranscriptView = () => {
     >
       <LoadingOverlay visible={isLoading} />
       <Stack gap="xl" h="100%">
-        {error && (
+        {/* {error && (
           <Alert title={error.message}>{error.response?.data.message}</Alert>
         )}
-        <Title mt="xl">{JSON.stringify(data, null, 2)}</Title>
+        <Title mt="xl">{JSON.stringify(data, null, 2)}</Title> */}
         <ScrollArea h="100%" p="xl">
           <Stack gap="3rem">
             <Stack gap="xs">
