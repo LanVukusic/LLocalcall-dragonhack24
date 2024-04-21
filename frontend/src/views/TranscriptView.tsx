@@ -12,7 +12,6 @@ import {
 } from '@mantine/core';
 
 import { Transcript } from '../api/model';
-// import { IconCornerDownRight, IconExternalLink } from '@tabler/icons-react';
 import { useParams } from 'react-router-dom';
 import { useMeetingsControllerGetTranscripts } from '../api/meetings/meetings';
 

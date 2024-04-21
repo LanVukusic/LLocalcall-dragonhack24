@@ -7,12 +7,15 @@ import {
 import { useForm } from '@mantine/form';
 import { NavigateFunction } from 'react-router-dom';
 
-
 const CreateMeeting = ({
   context,
   id,
   innerProps,
-}: ContextModalProps<{ roomId: number; refetch: () => void, redirect: NavigateFunction }>) => {
+}: ContextModalProps<{
+  roomId: number;
+  refetch: () => void;
+  redirect: NavigateFunction;
+}>) => {
   const { mutateAsync, isPending } = useRoomsControllerCreateMeeting();
 
   const form = useForm({
@@ -48,12 +51,14 @@ const CreateMeeting = ({
               duration: values.duration,
             },
             id: innerProps.roomId.toString(),
-          }).then((data) => {
-           
-            innerProps.redirect(`/meeting/${data.id}`);
-            
-          });
-          context.closeModal(id);
+          })
+            .then((data) => {
+              // innerProps.redirect(`/video/${data.id}`);
+              innerProps.refetch();
+            })
+            .finally(() => {
+              context.closeModal(id);
+            });
         })}
       >
         <TextInput
@@ -131,7 +136,6 @@ const CreateRoom = ({
 };
 
 export const mantineModals = {
-
   createRoom: CreateRoom,
   createMeeting: CreateMeeting,
 } as const;

@@ -87,6 +87,7 @@ const Room = () => {
           status: UpdateMeetingDtoStatus.finished,
         },
       }));
+    socketRef.current?.close();
     redirect('/');
   };
 
@@ -187,6 +188,10 @@ const Room = () => {
           },
         );
       });
+
+    return () => {
+      socketRef.current?.close();
+    };
   }, []);
 
   function createPeer(
@@ -341,9 +346,7 @@ const Room = () => {
             variant="light"
             rightSection={<IconCalendarCheck />}
             onClick={() => {
-              confirm(
-                'This will conclude the meeting and kick all participants. Continue?',
-              ) && endMeeting();
+              endMeeting();
             }}
           >
             Finish meet
