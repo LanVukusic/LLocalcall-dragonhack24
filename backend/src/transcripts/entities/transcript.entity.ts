@@ -4,7 +4,7 @@ import {
   Column,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -16,7 +16,7 @@ export class Transcript {
   @Column()
   text: string;
 
-  @OneToOne(() => Users)
+  @ManyToOne(() => Users)
   @JoinColumn()
   createdBy: Users;
 
@@ -26,7 +26,7 @@ export class Transcript {
   @Column()
   end: Date;
 
-  @OneToOne(() => Meeting)
+  @ManyToOne(() => Meeting)
   @JoinColumn()
   meeting: Meeting;
 }
