@@ -352,7 +352,7 @@ const Room = () => {
             variant="subtle"
             color="red"
             onClick={() => {
-              redirect('/');
+              window.location.replace('/');
             }}
           >
             Leave
