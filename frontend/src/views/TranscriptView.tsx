@@ -28,7 +28,7 @@ export const TranscriptView = () => {
   // console.log('transcript data: ' + data);
 
   return (
-    <Tabs defaultValue="transcripts">
+    <Tabs defaultValue="transcripts" h="100%" >
       <Container py="xl">
         <Tabs.List>
           <Tabs.Tab value="transcripts">
@@ -46,16 +46,12 @@ export const TranscriptView = () => {
 
       <Tabs.Panel
         value="transcripts"
-        style={{
-          overflow: 'hidden',
-        }}
+        h="100%"
       >
         <Container
           pos="relative"
           h="100%"
-          style={{
-            overflow: 'hidden',
-          }}
+         
         >
           <LoadingOverlay visible={isLoading} />
           <Stack gap="xl" h="100%">
@@ -64,11 +60,10 @@ export const TranscriptView = () => {
                 {error?.response?.data?.message}
               </Alert>
             )}
-
-            <ScrollArea h="100%" p="xl">
-              <Stack gap="3rem">
+            <ScrollArea h="100%" p="xl" style={{ overflowY: 'auto' }}>
+              <Stack gap="3rem" mb="xl">
                 {data?.transcripts?.map((transcript: Transcript) => (
-                  <Stack gap="xs" key={transcript.id}>
+                  <Stack gap="xs" key={transcript.id} >
                     <Group w="100%" justify="space-between">
                       <Badge variant="light" radius="xs">
                         {transcript?.createdBy?.username}
@@ -100,9 +95,11 @@ export const TranscriptView = () => {
       </Tabs.Panel>
 
       <Tabs.Panel value="summary">
-        <Container pos="relative" h="100%" m="lg" w="100%">
-          <Text>{data?.summary}</Text>
-        </Container>
+        <Stack align="center" justify="center">
+          <Container h="100%" m="lg" w="100%">
+            <Text>{data?.summary}</Text>
+          </Container>
+        </Stack>
       </Tabs.Panel>
     </Tabs>
   );

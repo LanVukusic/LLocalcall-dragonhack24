@@ -195,12 +195,20 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
           `Transcript saved: text=${trancript.text}, meeting=${meeting?.id || 'NONE'}, user=${user.id}`,
         );
 
-        client.emit('transcript', {
-          start,
-          end,
-          content,
-          username: user.username,
-        });
+        for (const [socketId, roomId] of Object.entries(this.socketToRoom)) {
+          if (roomId === roomId) {
+            try {
+              this.server.to(socketId).emit('transcript', {
+                start: newStart,
+                end: newEnd,
+                content,
+                username: user.username,
+              });
+            } catch (e) {
+              this.logger.error(e);
+            }
+          }
+        }
       });
       this.sockets.set(recastedUserId, socket);
     } catch (e) {
