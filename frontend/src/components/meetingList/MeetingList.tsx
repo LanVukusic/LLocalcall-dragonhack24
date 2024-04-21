@@ -91,7 +91,7 @@ export const MeetingsList = ({ room }: { room: Room }) => {
               <Text size="2rem" fw="bold">
                 {room.name}
               </Text>
-              <Text size="md" c="teal.7" fw="lighter" opacity={0.8}>
+              <Text size="md" c="violet.5" fw="lighter" opacity={0.8}>
                 {room.description}
               </Text>
             </Stack>
