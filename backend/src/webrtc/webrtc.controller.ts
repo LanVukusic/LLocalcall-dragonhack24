@@ -191,6 +191,8 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
           meeting: meeting,
         });
 
+        // Make call to Enei : )
+
         this.logger.log(
           `Transcript saved: text=${trancript.text}, meeting=${meeting?.id || 'NONE'}, user=${user.id}`,
         );

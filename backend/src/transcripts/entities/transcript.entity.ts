@@ -29,4 +29,10 @@ export class Transcript {
   @ManyToOne(() => Meeting)
   @JoinColumn()
   meeting: Meeting;
+
+  @Column({
+    type: 'text',
+    nullable: true,
+  })
+  gitlabData?: string;
 }

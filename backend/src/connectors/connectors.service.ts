@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateConnectorDto } from './dto/create-connector.dto';
 import { UpdateConnectorDto } from './dto/update-connector.dto';
 
+// Wasnt enough time for this
+
 @Injectable()
 export class ConnectorsService {
   create(createConnectorDto: CreateConnectorDto) {
