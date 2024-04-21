@@ -179,7 +179,7 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
       });
 
       this.logger.log(
-        `Transcript saved: text=${trancript.text}, meeting=${meeting.id}, user=${user.id}`,
+        `Transcript saved: text=${trancript.text}, meeting=${meeting?.id || 'NONE'}, user=${user.id}`,
       );
 
       client.emit('transcript', {

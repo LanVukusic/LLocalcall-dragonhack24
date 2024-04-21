@@ -21,7 +21,10 @@ export class MeetingsService {
   private logger = new Logger(MeetingsService.name);
 
   getTranscripts(id: number) {
-    return this.transcriptRepository.find({ where: { meeting: { id } } });
+    return this.transcriptRepository.find({
+      where: { meeting: { id } },
+      relations: ['createdBy'],
+    });
   }
 
   async update(id: number, updateMeetingDto: UpdateMeetingDto) {
@@ -76,6 +79,13 @@ export class MeetingsService {
     }
 
     return updated;
+  }
+
+  getOne(id: number) {
+    return this.meetingRepository.findOne({
+      where: { id },
+      relations: ['transcripts', 'room'],
+    });
   }
 
   remove(id: number) {
