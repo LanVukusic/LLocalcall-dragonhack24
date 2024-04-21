@@ -18,7 +18,7 @@ import { IconCircleKey } from '@tabler/icons-react';
 import { jwtDecode } from 'jwt-decode';
 
 import { useStore } from '@nanostores/react';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { $currUser } from '../global-state/user';
 import { useAuthControllerSignIn } from '../api/auth/auth';
 
@@ -108,9 +108,10 @@ export function Authentication() {
                   Sign in
                 </Button>
 
-                <Group>
-                  <Text></Text>
-                </Group>
+                <Text size="sm" pt="lg">
+                  Don't have an account yet?{' '}
+                  <Link to="/register">Sign up now!</Link>
+                </Text>
               </Stack>
             </form>
           </Paper>

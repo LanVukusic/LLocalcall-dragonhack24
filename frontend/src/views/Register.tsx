@@ -18,12 +18,13 @@ import { IconCircleKey } from '@tabler/icons-react';
 
 import { $currUser } from '../global-state/user';
 import { useStore } from '@nanostores/react';
-import { Navigate, redirect } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuthControllerSignUp } from '../api/auth/auth';
 
 export function Register() {
   const { mutateAsync, isPending, error } = useAuthControllerSignUp();
   const user = useStore($currUser);
+  const redirect = useNavigate();
 
   const form = useForm({
     initialValues: {
@@ -105,6 +106,10 @@ export function Register() {
                 <Button fullWidth mt="xl" type="submit">
                   Register
                 </Button>
+
+                <Text size="sm" pt="lg">
+                  Already have an account? <Link to="/login">Login</Link>
+                </Text>
               </Stack>
             </form>
           </Paper>
