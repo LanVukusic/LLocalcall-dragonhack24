@@ -119,10 +119,10 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.socketIdToUser.set(client.id, recastedUserId);
 
     const socket: net.Socket = net.createConnection(
-      this.freeConfigs[this.index],
+      this.freeConfigs[this.index % this.freeConfigs.length],
       () => {
         this.logger.log(
-          `Connected to server: ${this.freeConfigs[this.index].port}`,
+          `Connected to server: ${this.freeConfigs[this.index % this.freeConfigs.length].port}`,
         );
       },
     );
