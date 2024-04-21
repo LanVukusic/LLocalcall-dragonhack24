@@ -10,7 +10,7 @@ import {
 } from '@mantine/core';
 import { IconMenu } from '@tabler/icons-react';
 import { openTypedModal } from '../../mantine/modals/modals-utils';
-import { useRoomsControllerFindAll } from '../../api/rooms/rooms';
+import { Room } from '../../api/model';
 
 type SideBarProps = {
   opened: boolean;
@@ -19,8 +19,10 @@ type SideBarProps = {
     readonly close: () => void;
     readonly toggle: () => void;
   };
-  selectedRoom: number;
+  selectedRoom: number | null;
   setSelectedRoom: (room: number) => void;
+  loadingRooms: boolean;
+  rooms: Room[] | undefined;
 };
 
 export const SideBar = ({
@@ -28,12 +30,12 @@ export const SideBar = ({
   handlers,
   selectedRoom,
   setSelectedRoom,
+  loadingRooms,
+  rooms,
 }: SideBarProps) => {
-  const setRoom = (room: number) => {
-    setSelectedRoom(room);
+  const setRoom = (roomId: number) => {
+    setSelectedRoom(roomId);
   };
-
-  const { data: rooms, isLoading: loadingRooms } = useRoomsControllerFindAll();
 
   return (
     <Stack
@@ -69,12 +71,13 @@ export const SideBar = ({
                       key={room.id}
                       ml="20"
                       m="5"
-                      onClick={() => setRoom(0)}
+                      onClick={() => setRoom(room.id)}
                       style={{
-                        fontWeight: selectedRoom === 0 ? 'bold' : 'normal',
+                        fontWeight:
+                          selectedRoom === room.id ? 'bold' : 'normal',
                       }}
                     >
-                      Room 1
+                      {room.name}
                     </Text>
                   );
                 })}
@@ -89,11 +92,9 @@ export const SideBar = ({
           <Button
             onClick={() => {
               openTypedModal({
-                modal: 'testName',
+                modal: 'createRoom',
                 title: 'Create Room',
-                body: {
-                  modalBody: 'Create Room Body',
-                },
+                body: { modalPrice: 0 },
               });
             }}
           >

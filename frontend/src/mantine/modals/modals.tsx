@@ -1,5 +1,7 @@
-import { Badge, Button, Stack } from "@mantine/core";
-import { ContextModalProps } from "@mantine/modals";
+import { Badge, Button, LoadingOverlay, Stack, TextInput } from '@mantine/core';
+import { ContextModalProps } from '@mantine/modals';
+import { useRoomsControllerCreate } from '../../api/rooms/rooms';
+import { useForm } from '@mantine/form';
 
 const Test = ({
   context,
@@ -41,22 +43,57 @@ const Test2 = ({
   );
 };
 
-const createRoom = ({
+const CreateRoom = ({
   context,
   id,
-  innerProps,
 }: ContextModalProps<{ modalPrice: number }>) => {
+  const { mutateAsync, isPending } = useRoomsControllerCreate();
+
+  const form = useForm({
+    initialValues: {
+      name: '',
+      description: '',
+    },
+  });
+
   return (
     <Stack>
-      {innerProps.modalPrice}
-      {id}
-      <Button
-        onClick={() => {
-          context.closeModal(id);
-        }}
-      >
-        close
-      </Button>
+   
+      <Stack>
+        <LoadingOverlay visible={isPending} />
+        <form
+          onSubmit={form.onSubmit(async (values) => {
+            await mutateAsync({
+              data: {
+                name: values.name,
+                description: values.description,
+              },
+            }).then((data) => {
+              console.log(data);
+            });
+            context.closeModal(id);
+          })}
+        >
+          <TextInput
+            label="Name"
+            placeholder="Room name"
+            required
+            {...form.getInputProps('name')}
+          />
+          <TextInput
+            label="Description"
+            placeholder="Room description"
+            required
+            mt="md"
+            {...form.getInputProps('description')}
+          />
+          <Button fullWidth mt="xl" type="submit">
+            Create room
+          </Button>
+        </form>
+      </Stack>
+
+      
     </Stack>
   );
 };
@@ -64,5 +101,5 @@ const createRoom = ({
 export const mantineModals = {
   testName: Test,
   test2name: Test2,
-  createRoom: createRoom,
+  createRoom: CreateRoom,
 } as const;

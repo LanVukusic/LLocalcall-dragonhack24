@@ -1,21 +1,15 @@
-import { Card, Text, Stack, Badge, Group, Title } from '@mantine/core'; // Assuming you're using Mantine
+import { Card, Text, Stack, Badge, Group, Title, Button } from '@mantine/core'; // Assuming you're using Mantine
 import classes from './MeetingList.module.css';
+import { Meeting } from '../../api/model';
 
 type MeetingProps = {
-  meeting: {
-    id: string;
-    title: string;
-    startTime: Date;
-    endTime: Date;
-    attendees: string[];
-  };
+  meeting: Meeting;
   setSelectedMeetingId: (num: number) => void;
 };
 
 const MeetingCard = ({ meeting, setSelectedMeetingId }: MeetingProps) => {
-  const isPast = meeting.startTime < new Date(); // Check if meeting has already started
-  const isLive =
-    meeting.startTime <= new Date() && meeting.endTime >= new Date();
+  const isPast = new Date(meeting.startTime) < new Date(); // Check if meeting has already started
+  const isLive = true;
 
   // const { hovered, ref } = useHover();
 
@@ -37,42 +31,38 @@ const MeetingCard = ({ meeting, setSelectedMeetingId }: MeetingProps) => {
       style={{ width: '100%' }}
       className={classes.meetingCard}
       onClick={() => {
-        setSelectedMeetingId(parseInt(meeting.id));
+        setSelectedMeetingId(meeting.id);
       }}
     >
       <Stack>
         <Group>
-          <Text style={{ fontWeight: 'bold' }}>{meeting.title} </Text>
+          <Text style={{ fontWeight: 'bold' }}>{meeting.name} </Text>
           {status}
         </Group>
         <Group>
-          <Text>
-            {meeting.startTime.toLocaleString()} -{' '}
-            {meeting.endTime.toLocaleString()}
-          </Text>
+          <Text>{meeting.startTime.toLocaleString()} - </Text>
         </Group>
-
-        <Text>Attendees: {meeting.attendees.join(', ')}</Text>
       </Stack>
     </Card>
   );
 };
 
-const MeetingsList = ({
+export const MeetingsList = ({
   meetings,
   setSelectedMeetingId,
 }: {
-  meetings: {
-    id: string;
-    title: string;
-    startTime: Date;
-    endTime: Date;
-    attendees: string[];
-  }[];
-  setSelectedMeetingId: React.Dispatch<React.SetStateAction<number | null>>;
+  meetings: Meeting[];
+  setSelectedMeetingId: (num: number) => void;
 }) => {
   return (
-    <Stack mt="60" pb="lg">
+    <Stack mt="40" pb="lg" mx="lg">
+      <Group>
+        <Title order={1} px="xl" c="teal.6">
+          Meetings
+        </Title>
+        <Button></Button>
+      </Group>
+
       {meetings.map((meeting) => (
         <MeetingCard
           key={meeting.id}
@@ -84,4 +74,4 @@ const MeetingsList = ({
   );
 };
 
-export default MeetingsList;
+

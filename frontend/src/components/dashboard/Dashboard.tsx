@@ -1,78 +1,61 @@
-import { Container, Flex, ScrollArea, Stack, Title } from '@mantine/core';
+import { Flex, LoadingOverlay, ScrollArea, Stack } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { SideBar } from '../sidebar/SideBar';
-import { useState } from 'react';
-import MeetingsList from '../meetingList/MeetingList';
-import Meeting from '../meeting/Meeting';
+import { useEffect, useState } from 'react';
+import { MeetingsList } from '../meetingList/MeetingList';
 
-const meetings = [
-  {
-    id: 0,
-    title: 'Client Meeting',
-    startTime: new Date(2024, 2, 18, 13, 0), // April 28, 2024, 1:00 PM
-    endTime: new Date(2024, 2, 18, 14, 0), // April 28, 2024, 2:00 PM
-    attendees: ['Olivia Martinez', 'James Brown', 'Sophia Davis'],
-  },
-  {
-    id: 1,
-    title: 'Project Kickoff Meeting',
-    startTime: new Date(2024, 4, 19, 10, 0), // April 19, 2024, 10:00 AM
-    endTime: new Date(2024, 4, 19, 11, 0), // April 19, 2024, 11:00 AM
-    attendees: ['John Doe', 'Jane Smith', 'Michael Lee'],
-  },
-  {
-    id: 2,
-    title: 'Brainstorming Session',
-    startTime: new Date(2024, 4, 22, 14, 0), // April 22, 2024, 2:00 PM
-    endTime: new Date(2024, 4, 22, 15, 0), // April 22, 2024, 3:00 PM
-    attendees: ['Alice Johnson', 'Bob Williams', 'Emily Brown'],
-  },
-  {
-    id: 0,
-    title: 'Client Meeting',
-    startTime: new Date(2024, 2, 18, 13, 0), // April 28, 2024, 1:00 PM
-    endTime: new Date(2024, 2, 18, 14, 0), // April 28, 2024, 2:00 PM
-    attendees: ['Olivia Martinez', 'James Brown', 'Sophia Davis'],
-  },
+// import { useMeetingsControllerUpdate } from '../../api/meetings/meetings';
+import {
+  useRoomsControllerFindAll,
+  useRoomsControllerGetMeetings,
+} from '../../api/rooms/rooms';
+import type { Meeting } from '../../api/model';
+
+const meetings_dummy: Meeting[] = [
   {
     id: 1,
-    title: 'Project Kickoff Meeting',
-    startTime: new Date(2024, 4, 19, 10, 0), // April 19, 2024, 10:00 AM
-    endTime: new Date(2024, 4, 19, 11, 0), // April 19, 2024, 11:00 AM
-    attendees: ['John Doe', 'Jane Smith', 'Michael Lee'],
-  },
-  {
-    id: 2,
-    title: 'Brainstorming Session',
-    startTime: new Date(2024, 4, 22, 14, 0), // April 22, 2024, 2:00 PM
-    endTime: new Date(2024, 4, 22, 15, 0), // April 22, 2024, 3:00 PM
-    attendees: ['Alice Johnson', 'Bob Williams', 'Emily Brown'],
-  },
-  {
-    id: 3,
-    title: 'Team Progress Update',
-    startTime: new Date(2024, 4, 25, 9, 30), // April 25, 2024, 9:30 AM
-    endTime: new Date(2024, 4, 25, 10, 30), // April 25, 2024, 10:30 AM
-    attendees: ['David Chen', 'Sarah Miller', 'William Garcia'],
-  },
-  // live meeting
-  {
-    id: 4,
-    title: 'Sprint Planning Meeting',
-    startTime: new Date(2024, 4, 26, 13, 0), // April 26, 2024, 1:00 PM
-    endTime: new Date(2024, 4, 26, 14, 0), // April 26, 2024, 2:00 PM
-    attendees: ['Olivia Martinez', 'James Brown', 'Sophia Davis'],
+    name: 'Meeting 1',
+    startTime: new Date().toISOString(),
+    transcripts: [],
+    duration: 0,
+    room: {
+      createdBy: {
+        id: 1,
+        password: 'string;',
+        transcripts: [],
+        username: 'testuser',
+      },
+      description: 'string',
+      id: 2,
+      meetings: [],
+      name: '2112',
+    },
   },
 ];
 
 export const DashBoard = () => {
   const [opened, handlers] = useDisclosure(false);
-  const [selectedRoom, setSelectedRoom] = useState(0);
   const [selectedMeetingId, setSelectedMeetingId] = useState<number | null>(
     null,
   );
-
   const [page, setPage] = useState('dashboard');
+  const { data: rooms, isLoading: loadingRooms } = useRoomsControllerFindAll();
+
+  const [selectedRoomId, setSelectedRoom] = useState<number | null>(
+    rooms && rooms[0].id ? rooms[0].id : null,
+  );
+
+  const { data, isLoading } = useRoomsControllerGetMeetings(
+    selectedRoomId?.toString() || '',
+  );
+
+  useEffect(() => {
+    if (selectedMeetingId === -1 || selectedMeetingId === null) {
+      setPage('dashboard');
+    } else {
+      setPage('meeting');
+    }
+  }, [selectedMeetingId]);
 
   return (
     <Flex
@@ -84,29 +67,30 @@ export const DashBoard = () => {
       <SideBar
         opened={opened}
         handlers={handlers}
-        selectedRoom={selectedRoom}
+        selectedRoom={selectedRoomId || -1}
         setSelectedRoom={setSelectedRoom}
+        loadingRooms={loadingRooms}
+        rooms={rooms}
       />
 
       <Stack w="100%" py="md">
-        <Title order={1} px="xl" c="teal.6">
-          Dashboard
-        </Title>
-
         <ScrollArea h="100%" type="always" w="100%">
-          <Container size="sm">
+          <Stack>
             {page === 'dashboard' ? (
-              <MeetingsList
-                meetings={meetings}
-                setSelectedMeetingId={setSelectedMeetingId}
-              />
+              <>
+                <LoadingOverlay visible={isLoading} />
+                <MeetingsList
+                  meetings={data || meetings_dummy}
+                  setSelectedMeetingId={setSelectedMeetingId}
+                />
+              </>
             ) : (
-              <Meeting
-                meetingId={selectedMeetingId}
+              <MeetingView
+                meetingId={selectedMeetingId || -1}
                 setSelectedMeetingId={setSelectedMeetingId}
               />
             )}
-          </Container>
+          </Stack>
         </ScrollArea>
       </Stack>
     </Flex>

@@ -4,4 +4,7 @@ export const mantineTheme = createTheme({
   primaryColor: 'teal',
   primaryShade: 6,
   fontFamily: 'monospace',
+  lineHeights: {
+    md: '150%',
+  },
 });
