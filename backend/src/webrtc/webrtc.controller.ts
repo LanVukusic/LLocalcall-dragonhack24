@@ -227,7 +227,7 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
           }
         });
 
-        const gitlabData = res.data.issues || null;
+        const gitlabData = res?.data?.issues || null;
 
         // update transcript with gitlab data
         await this.transcriptRepository
