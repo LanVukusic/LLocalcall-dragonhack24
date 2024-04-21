@@ -5,9 +5,12 @@
  * WIP
  * OpenAPI spec version: 1.0
  */
+import type { UpdateMeetingDtoStatus } from './updateMeetingDtoStatus';
 
 export interface UpdateMeetingDto {
   duration?: number;
+  endTime?: string;
   name?: string;
   startTime?: string;
+  status: UpdateMeetingDtoStatus;
 }

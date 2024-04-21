@@ -8,6 +8,7 @@ import {
   Avatar,
   Badge,
   Button,
+  LoadingOverlay,
 } from '@mantine/core';
 
 import {
@@ -19,6 +20,8 @@ import {
 } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { $currUser } from '../../global-state/user';
+import { useMeetingsControllerUpdate } from '../../api/meetings/meetings';
+import { UpdateMeetingDtoStatus } from '../../api/model';
 
 const attendees = [
   {
@@ -48,13 +51,13 @@ const attendees = [
 ];
 
 export const MeetingView = () => {
-  // const { meetingId } = useParams();
+  const { meetingId } = useParams();
   const redirect = useNavigate();
 
   // const { mutateAsync, isPending } = useMeetingControllerUpdate(meetingId);
-
+  const {mutateAsync, isPending} = useMeetingsControllerUpdate();
   const currentUsername = $currUser.value?.name;
-  console.log(currentUsername);
+  // console.log(currentUsername);
 
   const [cameraStatus, setCameraStatus] = useState(true); // Camera on by default
   const [microphoneStatus, setMicrophoneStatus] = useState(true); // Microphone on by default
@@ -66,18 +69,20 @@ export const MeetingView = () => {
     setMicrophoneStatus((prevStatus) => !prevStatus);
   };
 
-  // const endMeeting = async () => {
-  //   confirm('Sure want to end the meeting?') &&
-  //     (await mutateAsync({
-  //       data: {
-  //         isFinished: true,
-  //       },
-  //     })) &&
-  //     redirect('/');
-  // };
+  const endMeeting = async () => {
+    confirm('Sure want to end the meeting?') &&
+      (await mutateAsync( {
+        id: meetingId || '',
+        data: {
+          status : UpdateMeetingDtoStatus.finished,
+        },
+      })) 
+      redirect('/');
+  };
 
   return (
     <Stack mt="40" pb="lg" mx="lg">
+      <LoadingOverlay visible={isPending} />
       <Grid grow pb="md" gutter="xs">
         {attendees.map((attendee) => (
           <Grid.Col key={attendee.id} span={4}>
@@ -139,7 +144,7 @@ export const MeetingView = () => {
         </Group>
         <Button
           onClick={() => {
-            // endMeeting();
+            endMeeting();
           }}
         >
           <Group>

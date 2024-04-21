@@ -21,15 +21,14 @@ type MeetingProps = {
 };
 
 const MeetingCard = ({ meeting }: MeetingProps) => {
-  const isPast = new Date(meeting.startTime) < new Date(); // Check if meeting has already started
-  // const isLive = !meeeting.isFinished;
-  const isLive = true;
+  const meetingStatus = meeting.status || 'live'; // Check if meeting is live
+  // const isLive = true;
   const redirect = useNavigate();
 
   let status;
-  if (isLive) {
+  if (meetingStatus == 'live') {
     status = <Badge color="red">Live</Badge>;
-  } else if (isPast) {
+  } else if (meetingStatus == 'finished') {
     status = <Badge color="gray">Past</Badge>;
   } else {
     status = <Badge color="green">Scheduled</Badge>;
@@ -44,10 +43,9 @@ const MeetingCard = ({ meeting }: MeetingProps) => {
       style={{ width: '100%' }}
       className={classes.meetingCard}
       onClick={() => {
-        // meeting.status === 'live'
-        //   ? redirect(`/meeting/${meeting.id}`)
-        //   : redirect(`/transcript/${meeting.id}`);
-        redirect(`/meeting/${meeting.id}`);
+        meetingStatus === 'live'
+          ? redirect(`/meeting/${meeting.id}`)
+          : redirect(`/transcript/${meeting.id}`);
       }}
     >
       <Stack>
@@ -76,6 +74,13 @@ export const MeetingsList = ({ room }: { room: Room }) => {
   } = useRoomsControllerGetMeetings(room.id.toString());
   const redirect = useNavigate();
 
+  if (meetings) {
+    // order meetings by start time in descending order
+    meetings.sort((a, b) => {
+      return new Date(b.startTime).getTime() - new Date(a.startTime).getTime();
+    });
+  }
+
   return (
     <Container>
       <Stack mt="40" pb="lg" pos="relative" gap="xl">
@@ -100,7 +105,7 @@ export const MeetingsList = ({ room }: { room: Room }) => {
                 body: {
                   refetch: refetch,
                   roomId: room.id,
-                  redirect: redirect
+                  redirect: redirect,
                 },
               });
             }}
