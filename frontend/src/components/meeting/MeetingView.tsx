@@ -16,7 +16,7 @@ import {
   IconVideo,
   IconVideoOff,
 } from '@tabler/icons-react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const attendees = [
   {
@@ -46,7 +46,7 @@ const attendees = [
 ];
 
 export const MeetingView = () => {
-  const { meetingId } = useParams();
+  // const { meetingId } = useParams();
   const redirect = useNavigate();
 
   const [cameraStatus, setCameraStatus] = useState(true); // Camera on by default
