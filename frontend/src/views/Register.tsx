@@ -74,7 +74,7 @@ export function Register() {
                     password: values.password,
                   },
                 }).then(() => {
-                  redirect('/login');
+                  redirect('/login'); // TODO: NEDELA
                   // $currUser.set({
                   //   name: user.username,
                   //   transcripts: user.transcripts,

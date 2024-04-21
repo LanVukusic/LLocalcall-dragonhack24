@@ -11,6 +11,8 @@ import {
 import { Server, Socket } from 'socket.io';
 import * as net from 'net';
 
+import * as fs from 'fs';
+
 @WebSocketGateway({
   cors: {
     origin: '*', // Adjust according to your CORS policy
@@ -26,10 +28,13 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private socket: net.Socket;
 
+  // Write data to a file
+  private;
+
   handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`);
 
-    /*  try {
+    try {
       // 142.93.161.127:43001
       this.socket = net.createConnection(
         {
@@ -40,9 +45,13 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
           this.logger.log('Connected');
         },
       );
+
+      this.socket.on('data', (data) => {
+        console.log(`Received: ${data}`);
+      });
     } catch (e: any) {
-      this.logger.error(e);
-    } */
+      // this.logger.error(e);
+    }
   }
 
   handleDisconnect(client: Socket) {
@@ -114,5 +123,12 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('audio')
   handleAudio(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
     // this.logger.log(`Client sending audio: ${data}`);
+    //
+    this.socket.write(data);
+    // fs.appendFile('audio.pcm', data, (err) => {
+    //   if (err) {
+    //     console.log(err);
+    //   }
+    // });
   }
 }

@@ -4,7 +4,7 @@ import io, { Socket } from 'socket.io-client';
 import { SignalData } from 'simple-peer';
 
 import Peer from 'simple-peer/simplepeer.min.js';
-import { Streamer, useAudioStreamer } from './audioStreamRecorder';
+import { Streamer } from './audioStreamRecorder';
 
 interface VideoProps {
   peer: Peer.Instance;
@@ -55,19 +55,31 @@ const Room: React.FC<RoomProps> = ({ match }) => {
     socketRef.current = io('http://localhost:3000');
 
     navigator.mediaDevices
-      .getUserMedia({ video: videoConstraints, audio: true })
+      .getUserMedia({
+        video: videoConstraints,
+        audio: {
+          channelCount: 1,
+          echoCancellation: true,
+        },
+      })
       .then((stream) => {
         if (userVideo.current) {
           userVideo.current.srcObject = stream;
 
-          new Streamer(stream, new AudioContext(), (data) => {
-            if (!socketRef.current) {
-              console.error('Socket not connected');
-              return;
-            }
+          console.log(stream.getAudioTracks()[0].getSettings());
 
-            socketRef.current.emit('audio', data);
-          });
+          new Streamer(
+            stream,
+            new AudioContext({ sampleRate: 16000 }),
+            (data) => {
+              if (!socketRef.current) {
+                console.error('Socket not connected');
+                return;
+              }
+
+              socketRef.current.emit('audio', data);
+            },
+          );
         }
         if (!socketRef.current) {
           console.error('Socket not connected');
@@ -147,7 +159,7 @@ const Room: React.FC<RoomProps> = ({ match }) => {
     peer.on('signal', (signal: SignalData) => {
       console.log('Signal', signal);
 
-      if (signal.renegotiate || signal.transceiverRequest) return;
+      // if (signal.renegotiate || signal.transceiverRequest) return;
 
       socketRef.current?.emit('sending signal', {
         userToSignal,

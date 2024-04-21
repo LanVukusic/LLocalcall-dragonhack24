@@ -14,8 +14,12 @@ import { useStore } from '@nanostores/react';
 import { $currUser } from '../../global-state/user';
 import { Navigate } from 'react-router-dom';
 import { IconLogout } from '@tabler/icons-react';
+import { useRoomsControllerFindAll } from '../../api/rooms/rooms';
 
 export const Navbar = () => {
+  const { data, isLoading } = useRoomsControllerFindAll();
+  console.log({ data });
+
   // const [opened, { toggle }] = useDisclosure();
 
   const user = useStore($currUser);

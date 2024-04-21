@@ -47,7 +47,7 @@ export function Authentication() {
         <Container size={620} miw={440}>
           <Group align="baseline">
             <Text c="dimmed">
-              <IconCircleKey></IconCircleKey>
+              <IconCircleKey />
             </Text>
             <Title>Login</Title>
           </Group>
@@ -70,7 +70,6 @@ export function Authentication() {
                     password: values.password,
                   },
                 }).then((data) => {
-                  // @ts-expect-error pač dela samo api je mlo skif
                   const token = data.access_token;
                   $currUser.set({
                     name: values.username,
