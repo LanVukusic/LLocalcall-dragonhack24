@@ -4,8 +4,8 @@ import {
   Button,
   Group,
   LoadingOverlay,
+  NavLink,
   Stack,
-  Text,
   Title,
 } from '@mantine/core';
 import { IconMenu } from '@tabler/icons-react';
@@ -54,7 +54,6 @@ export const SideBar = ({
           <Group justify="space-between" w="100%" h="100%">
             <Stack w="100%" h="100%">
               <Group align="center" justify="space-between" w="100%">
-                {/* <IconDoor size={20} style={{ textAlign: 'center' }} /> */}
                 <Title order={2} c="teal.6">
                   Rooms
                 </Title>
@@ -65,18 +64,12 @@ export const SideBar = ({
               {rooms &&
                 rooms.map((room) => {
                   return (
-                    <Text
+                    <NavLink
                       key={room.id}
-                      ml="20"
-                      m="5"
+                      label={room.name}
+                      active={selectedRoom === room.id}
                       onClick={() => setSelectedRoom(room)}
-                      style={{
-                        fontWeight:
-                          selectedRoom === room.id ? 'bold' : 'normal',
-                      }}
-                    >
-                      {room.name}
-                    </Text>
+                    />
                   );
                 })}
 

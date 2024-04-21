@@ -16,6 +16,7 @@ import {
   IconVideo,
   IconVideoOff,
 } from '@tabler/icons-react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const attendees = [
   {
@@ -44,17 +45,9 @@ const attendees = [
   },
 ];
 
-interface MeetingProps {
-  meetingId: number;
-  setSelectedMeetingId: (meetingId: number) => void;
-}
-
-export const MeetingView = ({
-  meetingId,
-  setSelectedMeetingId,
-}: MeetingProps) => {
-  // const [gridSize, setGridSize] = useState(2); // Initial grid size (2x2)
-  console.log(meetingId);
+export const MeetingView = () => {
+  const { meetingId } = useParams();
+  const redirect = useNavigate();
 
   const [cameraStatus, setCameraStatus] = useState(true); // Camera on by default
   const [microphoneStatus, setMicrophoneStatus] = useState(true); // Microphone on by default
@@ -106,7 +99,7 @@ export const MeetingView = ({
         <Button
           variant="light"
           onClick={() => {
-            setSelectedMeetingId(-1);
+            confirm('Sure want to leave the meeting?') && redirect('/');
           }}
         >
           Leave Meeting

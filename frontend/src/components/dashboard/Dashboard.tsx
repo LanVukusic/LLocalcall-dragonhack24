@@ -43,11 +43,6 @@ export const DashBoard = () => {
               Open the sidebar and select a room
             </Alert>
           )}
-          {/*                 
-              // <MeetingView
-              //   meetingId={selectedMeetingId || -1}
-              //   setSelectedMeetingId={setSelectedMeetingId}
-              // /> */}
         </ScrollArea>
       </Stack>
     </Flex>
