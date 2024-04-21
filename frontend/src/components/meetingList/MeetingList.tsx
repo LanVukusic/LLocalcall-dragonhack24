@@ -63,35 +63,38 @@ export const MeetingsList = ({ room }: { room: Room }) => {
   const { data: meetings, isLoading } = useRoomsControllerGetMeetings(
     room.id.toString(),
   );
+  const { refetch } = useRoomsControllerGetMeetings(room.id.toString());
   return (
     <Container>
       <Stack mt="40" pb="lg" pos="relative" gap="xl">
         <LoadingOverlay visible={isLoading} />
 
-  
         <Group>
-        <Stack gap="xs" pb="xl">
-          <Text size="md" opacity={0.7}>
-            Meetings in
-          </Text>
-          <Text size="2rem" fw="bold">
-            {room.name}
-          </Text>
-        </Stack>
-        <Button justify='space-between' onClick={() => {
+          <Stack gap="xs" pb="xl">
+            <Text size="md" opacity={0.7}>
+              Meetings in
+            </Text>
+            <Text size="2rem" fw="bold">
+              {room.name}
+            </Text>
+          </Stack>
+          <Button
+            justify="space-between"
+            onClick={() => {
               openTypedModal({
                 modal: 'createMeeting',
                 title: 'Create Meeting',
                 body: {
+                  refetch: refetch,
                   roomId: room.id,
-                }
+                },
               });
-            }}>
-          <Text mr="sm">Create meeting</Text>
-          <IconPlus size={20} />
-        </Button>
+            }}
+          >
+            <Text mr="sm">Create meeting</Text>
+            <IconPlus size={20} />
+          </Button>
         </Group>
-        
 
         {meetings &&
           meetings.map((meeting) => (
