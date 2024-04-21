@@ -19,6 +19,7 @@ export class Meeting {
   @Column({
     type: 'enum',
     enum: Status,
+    default: Status.LIVE,
     nullable: false,
   })
   status: Status;
