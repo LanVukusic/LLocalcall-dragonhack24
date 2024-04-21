@@ -4,9 +4,7 @@ import { Authentication } from '../views/Login';
 import { DashBoard } from '../components/dashboard/Dashboard';
 import { Register } from '../views/Register';
 import Room from '../views/Video';
-import { TranscriptView } from '../views/TrascriptView';
-import { MeetingView } from '../components/meeting/MeetingView';
-// import { MeetingView } from '../components/meeting/MeetingView';
+import { TranscriptView } from '../views/TranscriptView';
 
 export const router = createBrowserRouter([
   {
@@ -24,10 +22,6 @@ export const router = createBrowserRouter([
       {
         path: '/meeting/:meetingId/transcript',
         element: <TranscriptView />,
-      },
-      {
-        path: '/meeting/:meetingId',
-        element: <MeetingView />,
       },
     ],
   },

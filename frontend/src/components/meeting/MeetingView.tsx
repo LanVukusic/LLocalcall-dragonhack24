@@ -55,7 +55,7 @@ export const MeetingView = () => {
   const redirect = useNavigate();
 
   // const { mutateAsync, isPending } = useMeetingControllerUpdate(meetingId);
-  const {mutateAsync, isPending} = useMeetingsControllerUpdate();
+  const { mutateAsync, isPending } = useMeetingsControllerUpdate();
   const currentUsername = $currUser.value?.name;
   // console.log(currentUsername);
 
@@ -71,13 +71,13 @@ export const MeetingView = () => {
 
   const endMeeting = async () => {
     confirm('Sure want to end the meeting?') &&
-      (await mutateAsync( {
+      (await mutateAsync({
         id: meetingId || '',
         data: {
-          status : UpdateMeetingDtoStatus.finished,
+          status: UpdateMeetingDtoStatus.finished,
         },
-      })) 
-      redirect('/');
+      }));
+    redirect('/');
   };
 
   return (
