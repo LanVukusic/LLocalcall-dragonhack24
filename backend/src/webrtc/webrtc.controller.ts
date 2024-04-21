@@ -11,6 +11,7 @@ import {
 } from '@nestjs/websockets';
 import * as net from 'net';
 import { Server, Socket } from 'socket.io';
+import { Transcript } from 'src/transcripts/entities/transcript.entity';
 import { Users } from 'src/users/users.entity';
 import { Repository } from 'typeorm';
 
@@ -26,6 +27,9 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     @InjectRepository(Users)
     private userRepository: Repository<Users>,
+
+    @InjectRepository(Transcript)
+    private transcriptRepository: Repository<Transcript>,
   ) {}
 
   @WebSocketServer() server: Server;
@@ -118,9 +122,6 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
     );
 
     socket.on('data', (data) => {
-      console.log('data', data.toString());
-      console.log('length', data.toString().trim().length);
-
       const c = data.toString().trim();
 
       if (c.length < 2) {
@@ -132,13 +133,22 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const start = parseInt(splitted[0]);
       const end = parseInt(splitted[1]);
 
-      const allElse = splitted.slice(2).join(' ');
+      const content = splitted.slice(2).join(' ');
 
       if (isNaN(start) || isNaN(end)) {
         return;
       }
 
-      console.log('start', start, 'end', end, 'allElse', allElse);
+      this.logger.log(
+        `User: ${user.username}: ${start} <-> ${end} : ${content}`,
+      );
+
+      client.emit('transcript', {
+        start,
+        end,
+        content,
+        username: user.username,
+      });
     });
 
     this.sockets.set(recastedUserId, socket);

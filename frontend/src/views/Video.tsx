@@ -5,6 +5,9 @@ import { SignalData } from 'simple-peer';
 
 import Peer from 'simple-peer/simplepeer.min.js';
 import { Streamer } from './audioStreamRecorder';
+import { useStore } from '@nanostores/react';
+import { $currUser } from '../global-state/user';
+import { Card, Flex, ScrollArea, Stack } from '@mantine/core';
 
 interface VideoProps {
   peer: Peer.Instance;
@@ -21,7 +24,7 @@ const Video: React.FC<VideoProps> = ({ peer }) => {
     });
   }, [peer]);
 
-  return <video playsInline autoPlay ref={ref} />;
+  return <video style={{ maxWidth: '300px' }} playsInline autoPlay ref={ref} />;
 };
 
 const videoConstraints = {
@@ -42,20 +45,32 @@ interface RoomProps {
   };
 }
 
+interface Transcript {
+  start: number;
+  end: number;
+  content: string;
+  username: string;
+}
+
 const Room: React.FC<RoomProps> = ({ match }) => {
   const [peers, setPeers] = useState<Peer.Instance[]>([]);
   const socketRef = useRef<Socket>();
   const userVideo = useRef<HTMLVideoElement>(null);
   const peersRef = useRef<PeerData[]>([]);
   const roomID = match.params.roomID;
-  // const {} = useAudioStreamer();
+  const user = useStore($currUser);
+
+  const [transcripts, setTranscripts] = useState<Transcript[]>([]);
 
   useEffect(() => {
     // socketRef.current = io('http://142.93.161.127:3000');
     socketRef.current = io('http://localhost:3000');
 
-    // TODO
-    socketRef.current.emit('join room', 0);
+    socketRef.current.emit('join audio', user?.sub);
+
+    socketRef.current.on('transcript', (data: Transcript) => {
+      setTranscripts((prev) => [...prev, data]);
+    });
 
     navigator.mediaDevices
       .getUserMedia({
@@ -193,12 +208,28 @@ const Room: React.FC<RoomProps> = ({ match }) => {
   }
 
   return (
-    <div>
-      <video muted ref={userVideo} autoPlay playsInline />
-      {peers.map((peer, index) => (
-        <Video key={index} peer={peer} />
-      ))}
-    </div>
+    <Flex direction="column" gap="md" w="100%">
+      <Stack maw="300px">
+        <video muted ref={userVideo} autoPlay playsInline />
+        {peers.map((peer, index) => (
+          <Video key={index} peer={peer} />
+        ))}
+      </Stack>
+
+      <ScrollArea h="500px">
+        <Stack>
+          {transcripts.map((transcript, index) => (
+            <Card key={index}>
+              <div>
+                <strong>{transcript.username}</strong>
+                <br />
+                {transcript.content}
+              </div>
+            </Card>
+          ))}
+        </Stack>
+      </ScrollArea>
+    </Flex>
   );
 };
 
