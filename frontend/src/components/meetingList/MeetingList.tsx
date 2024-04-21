@@ -8,6 +8,7 @@ import {
   LoadingOverlay,
   Container,
   Button,
+  Box,
 } from '@mantine/core'; // Assuming you're using Mantine
 import classes from './MeetingList.module.css';
 import { Meeting, Room } from '../../api/model';
@@ -51,8 +52,13 @@ const MeetingCard = ({ meeting }: MeetingProps) => {
           <Text style={{ fontWeight: 'bold' }}>{meeting.name} </Text>
           {status}
         </Group>
-        <Group>
-          <Text>{meeting.startTime.toLocaleString()} - </Text>
+        <Group gap="xs">
+          <Text opacity={0.5}>
+            {new Date(meeting.startTime).toLocaleDateString()}
+          </Text>
+          <Text fw="bold">
+            {new Date(meeting.startTime).toLocaleTimeString()}
+          </Text>
         </Group>
       </Stack>
     </Card>
@@ -63,35 +69,42 @@ export const MeetingsList = ({ room }: { room: Room }) => {
   const { data: meetings, isLoading } = useRoomsControllerGetMeetings(
     room.id.toString(),
   );
+
+  const AddBtn = (
+    <Button
+      justify="space-between"
+      onClick={() => {
+        openTypedModal({
+          modal: 'createMeeting',
+          title: 'Create Meeting',
+          body: {
+            roomId: room.id,
+          },
+        });
+      }}
+    >
+      <Text mr="sm">Create meeting</Text>
+      <IconPlus size={20} />
+    </Button>
+  );
+
   return (
     <Container>
       <Stack mt="40" pb="lg" pos="relative" gap="xl">
         <LoadingOverlay visible={isLoading} />
-
-  
-        <Group>
-        <Stack gap="xs" pb="xl">
-          <Text size="md" opacity={0.7}>
-            Meetings in
-          </Text>
-          <Text size="2rem" fw="bold">
-            {room.name}
-          </Text>
-        </Stack>
-        <Button justify='space-between' onClick={() => {
-              openTypedModal({
-                modal: 'createMeeting',
-                title: 'Create Meeting',
-                body: {
-                  roomId: room.id,
-                }
-              });
-            }}>
-          <Text mr="sm">Create meeting</Text>
-          <IconPlus size={20} />
-        </Button>
+        <Group w="100%" justify="space-between">
+          <Stack gap="xs" pb="xl">
+            <Stack>
+              <Text size="2rem" fw="bold">
+                {room.name}
+              </Text>
+              <Text size="md" c="teal.7" fw="lighter" opacity={0.8}>
+                {room.description}
+              </Text>
+            </Stack>
+          </Stack>
+          {AddBtn}
         </Group>
-        
 
         {meetings &&
           meetings.map((meeting) => (
