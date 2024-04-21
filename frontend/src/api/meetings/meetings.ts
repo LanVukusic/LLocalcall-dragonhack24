@@ -15,14 +15,14 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '@tanstack/react-query';
-import type { Transcript, UpdateMeetingDto } from '.././model';
+import type { Meeting, Transcript, UpdateMeetingDto } from '.././model';
 import { customInstance } from '.././mutator/custom-instance';
 import type { ErrorType, BodyType } from '.././mutator/custom-instance';
 
 type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
 
 /**
- * @summary Get all meetings
+ * @summary Update a meeting by id
  */
 export const meetingsControllerUpdate = (
   id: string,
@@ -78,7 +78,7 @@ export type MeetingsControllerUpdateMutationBody = BodyType<UpdateMeetingDto>;
 export type MeetingsControllerUpdateMutationError = ErrorType<unknown>;
 
 /**
- * @summary Get all meetings
+ * @summary Update a meeting by id
  */
 export const useMeetingsControllerUpdate = <
   TError = ErrorType<unknown>,
@@ -175,6 +175,96 @@ export const useMeetingsControllerRemove = <
 
   return useMutation(mutationOptions);
 };
+/**
+ * @summary Get one meeting by id with more details
+ */
+export const meetingsControllerGetOne = (
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal,
+) => {
+  return customInstance<Meeting>(
+    { url: `/meetings/${id}`, method: 'GET', signal },
+    options,
+  );
+};
+
+export const getMeetingsControllerGetOneQueryKey = (id: string) => {
+  return [`/meetings/${id}`] as const;
+};
+
+export const getMeetingsControllerGetOneQueryOptions = <
+  TData = Awaited<ReturnType<typeof meetingsControllerGetOne>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof meetingsControllerGetOne>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getMeetingsControllerGetOneQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof meetingsControllerGetOne>>
+  > = ({ signal }) => meetingsControllerGetOne(id, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof meetingsControllerGetOne>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type MeetingsControllerGetOneQueryResult = NonNullable<
+  Awaited<ReturnType<typeof meetingsControllerGetOne>>
+>;
+export type MeetingsControllerGetOneQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get one meeting by id with more details
+ */
+export const useMeetingsControllerGetOne = <
+  TData = Awaited<ReturnType<typeof meetingsControllerGetOne>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof meetingsControllerGetOne>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+  const queryOptions = getMeetingsControllerGetOneQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+};
+
 /**
  * @summary Get all transcripts for a meeting
  */
