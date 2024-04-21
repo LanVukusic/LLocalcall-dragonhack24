@@ -11,11 +11,12 @@ import {
 import { useStore } from '@nanostores/react';
 // import classes from './Navbar.module.css';
 import { $currUser } from '../../global-state/user';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { IconLogout } from '@tabler/icons-react';
 
 export const Navbar = () => {
   const user = useStore($currUser);
+  const redirect = useNavigate();
 
   if (user == null) {
     return <Navigate to="/login" />;
@@ -25,7 +26,14 @@ export const Navbar = () => {
     <Box w="100%" p="sm">
       <Paper w="100%" withBorder shadow="sm">
         <Group justify="space-between" m="0" p="sm" w="100%">
-          <Group>
+          <Group
+            style={{
+              cursor: 'pointer',
+            }}
+            onClick={() => {
+              redirect('/');
+            }}
+          >
             <img src="/Icon.svg" width="40px"></img>
             <Title order={1} size="1.5rem" fw="black">
               LLocalCaLL

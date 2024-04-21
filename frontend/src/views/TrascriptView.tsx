@@ -8,10 +8,11 @@ import {
   Stack,
   Title,
   ScrollArea,
+  Button,
 } from '@mantine/core';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useTranscriptsControllerFindOne } from '../api/transcripts/transcripts';
-import { IconCornerDownRight } from '@tabler/icons-react';
+import { IconCornerDownRight, IconExternalLink } from '@tabler/icons-react';
 
 export const TranscriptView = () => {
   const { transcriptId } = useParams();
@@ -75,13 +76,24 @@ export const TranscriptView = () => {
                   <Stack align="flex-start">
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea,
                     nam repellendus commodi ut expedita quo architecto!
-                    <Group>
-                      <Badge size="xs" color="orange">
-                        Frontend
-                      </Badge>
-                      <Badge size="xs" color="grape">
-                        Bug
-                      </Badge>
+                    <Group w="100%" justify="space-between">
+                      <Group>
+                        <Badge size="xs" color="orange">
+                          Frontend
+                        </Badge>
+                        <Badge size="xs" color="grape">
+                          Bug
+                        </Badge>
+                      </Group>
+
+                      <Button
+                        component={Link}
+                        to="https://gitlab.com/ul-fri-lpt/ul/on/on-stream/-/issues/14"
+                        variant="subtle"
+                        rightSection={<IconExternalLink size="20px" />}
+                      >
+                        view issue
+                      </Button>
                     </Group>
                   </Stack>
                 </Alert>

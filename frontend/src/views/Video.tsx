@@ -3,19 +3,11 @@ import io, { Socket } from 'socket.io-client';
 
 import { SignalData } from 'simple-peer';
 
-import Peer from 'simple-peer/simplepeer.min.js';
-import { Streamer } from './audioStreamRecorder';
 import {
-  Alert,
-  Text,
   Badge,
-  Box,
   Button,
   Card,
-  Center,
-  Container,
   Flex,
-  Grid,
   Group,
   Paper,
   ScrollArea,
@@ -25,15 +17,11 @@ import {
   Title,
 } from '@mantine/core';
 import { useStore } from '@nanostores/react';
-import { $currUser } from '../global-state/user';
-import {
-  IconCalendarCheck,
-  IconCheck,
-  IconNotebook,
-  IconWriting,
-  IconWritingSign,
-} from '@tabler/icons-react';
+import { IconCalendarCheck, IconNotebook } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
+import Peer from 'simple-peer/simplepeer.min.js';
+import { $currUser } from '../global-state/user';
+import { Streamer } from './audioStreamRecorder';
 
 interface VideoProps {
   peer: Peer.Instance;

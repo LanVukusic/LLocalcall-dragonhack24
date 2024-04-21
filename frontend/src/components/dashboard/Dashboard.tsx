@@ -1,4 +1,4 @@
-import { Alert, Container, Flex, ScrollArea, Stack } from '@mantine/core';
+import { Alert, Container, Flex, Group, ScrollArea } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { SideBar } from '../sidebar/SideBar';
 import { useState } from 'react';
@@ -7,6 +7,7 @@ import { MeetingsList } from '../meetingList/MeetingList';
 import { Room } from '../../api/model';
 // import { useMeetingsControllerUpdate } from '../../api/meetings/meetings';
 import { useRoomsControllerFindAll } from '../../api/rooms/rooms';
+import { IconChevronLeft } from '@tabler/icons-react';
 
 export const DashBoard = () => {
   const [opened, handlers] = useDisclosure(false);
@@ -40,8 +41,8 @@ export const DashBoard = () => {
           <MeetingsList room={selectedRoom} />
         ) : (
           <Container w="100%" h="100%" pt="xl">
-            <Alert title="No rooms seleted">
-              Open the sidebar and select a room
+            <Alert title="No rooms seleted" icon={<IconChevronLeft />}>
+              <Group>Open the sidebar and select a room</Group>
             </Alert>
           </Container>
         )}
