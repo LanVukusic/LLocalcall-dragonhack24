@@ -8,8 +8,6 @@ import {
   Stack,
   Title,
   ScrollArea,
-  NavLink,
-  Button,
 } from '@mantine/core';
 import { useParams } from 'react-router-dom';
 import { useTranscriptsControllerFindOne } from '../api/transcripts/transcripts';
@@ -33,7 +31,7 @@ export const TranscriptView = () => {
         {error && (
           <Alert title={error.message}>{error.response?.data.message}</Alert>
         )}
-        <Title>{JSON.stringify(data, null, 2)}</Title>
+        <Title mt="xl">{JSON.stringify(data, null, 2)}</Title>
         <ScrollArea h="100%" p="xl">
           <Stack gap="3rem">
             <Stack gap="xs">
