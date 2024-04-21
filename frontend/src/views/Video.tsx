@@ -5,6 +5,7 @@ import { SignalData } from 'simple-peer';
 
 import {
   Badge,
+  Box,
   Button,
   Card,
   Container,
@@ -96,8 +97,6 @@ const Room = () => {
   useEffect(() => {
     if (!selectedMeet) {
       return;
-    } else {
-      console.log({ selectedMeet });
     }
     socketRef.current = io('http://142.93.161.127:3000');
     // socketRef.current = io('http://localhost:3000');
@@ -160,7 +159,6 @@ const Room = () => {
             peers.push(peer);
           });
           setPeers(peers);
-          console.log(peers[0]);
         });
 
         socketRef.current.on(
@@ -248,20 +246,27 @@ const Room = () => {
 
   return (
     <SimpleGrid w="100%" h="100%" cols={3} p="sm" bg="gray.1">
-      <Paper
-        h="100%"
-        withBorder
-        shadow="xl"
-        p="md"
-        style={{ overflow: 'hidden' }}
-      >
-        <Group>
-          <IconNotebook opacity={0.5} size="1.8rem" />
-          <Title> Transcriptions </Title>
+      <Stack h="100%" w="100%" style={{ overflow: 'hidden' }}>
+        <Group justify="space-between" w="100%">
+          <Group>
+            <IconNotebook opacity={0.5} size="1.8rem" />
+            <Title> Transcriptions </Title>
+          </Group>
+          <Stack gap="0">
+            <Title order={2}>{selectedMeet.name}</Title>
+            <Title order={6} c="violet">
+              {new Date(selectedMeet.startTime).toLocaleDateString()}
+            </Title>
+          </Stack>
         </Group>
-
-        <ScrollArea h="100%" type="always" pt="sm">
-          <Stack>
+        <Paper
+          h="100%"
+          withBorder
+          shadow="xl"
+          p="xl"
+          style={{ overflow: 'hidden' }}
+        >
+          <ScrollArea h="100%" w="100%" type="always" scrollbars="y">
             {transcripts && transcripts.length == 0 && (
               <Stack>
                 <Skeleton height={8} mt={6} radius="xl" />
@@ -272,39 +277,30 @@ const Room = () => {
                 <Skeleton height={8} mt={6} width="70%" radius="xl" />
               </Stack>
             )}
-            {transcripts.map((transcript, index) => (
-              <Card key={index}>
-                <div>
-                  <strong>{transcript.username}</strong>
-                  <br />
+            <Stack gap="xl">
+              {transcripts.map((transcript, index) => (
+                <Stack key={index} gap="xs">
+                  <Badge radius="sm" variant="light">
+                    {transcript.username}
+                  </Badge>
                   {transcript.content}
-                </div>
-              </Card>
-            ))}
-          </Stack>
-        </ScrollArea>
-      </Paper>
+                </Stack>
+              ))}
+            </Stack>
+          </ScrollArea>
+        </Paper>
+      </Stack>
 
       <Flex
         justify="center"
         align="center"
         wrap="wrap"
+        h="100%"
         style={{
           gridColumnStart: 2,
           gridColumnEnd: 4,
         }}
       >
-        <Group w="100%" mt="auto" mb="xl" justify="end">
-          <Container w="100%">
-            <Stack gap="xs">
-              <Title>{selectedMeet.name}</Title>
-              <Title order={4} c="violet">
-                {new Date(selectedMeet.startTime).toLocaleDateString()}
-              </Title>
-            </Stack>
-          </Container>
-        </Group>
-
         <div>
           <video
             muted
@@ -312,6 +308,7 @@ const Room = () => {
             autoPlay
             playsInline
             style={{
+              maxWidth: '300px',
               borderRadius: '5px',
               border: '1px solid --mantine-color-gray-1',
             }}
