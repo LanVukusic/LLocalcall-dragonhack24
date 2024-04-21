@@ -15,6 +15,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconCircleKey } from '@tabler/icons-react';
+import { jwtDecode } from 'jwt-decode';
 
 import { useStore } from '@nanostores/react';
 import { Navigate } from 'react-router-dom';
@@ -71,10 +72,13 @@ export function Authentication() {
                   },
                 }).then((data) => {
                   const token = data.access_token;
+                  const { sub, iat, exp } = jwtDecode(token);
+
                   $currUser.set({
                     name: values.username,
                     token: token,
                     transcripts: [],
+                    sub: sub,
                   });
                 });
               })}

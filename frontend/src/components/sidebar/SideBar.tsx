@@ -23,6 +23,7 @@ type SideBarProps = {
   setSelectedRoom: (room: number) => void;
   loadingRooms: boolean;
   rooms: Room[] | undefined;
+  refetch: () => void;
 };
 
 export const SideBar = ({
@@ -32,6 +33,7 @@ export const SideBar = ({
   setSelectedRoom,
   loadingRooms,
   rooms,
+  refetch,
 }: SideBarProps) => {
   const setRoom = (roomId: number) => {
     setSelectedRoom(roomId);
@@ -94,7 +96,7 @@ export const SideBar = ({
               openTypedModal({
                 modal: 'createRoom',
                 title: 'Create Room',
-                body: { modalPrice: 0 },
+                body: { refetch: refetch },
               });
             }}
           >

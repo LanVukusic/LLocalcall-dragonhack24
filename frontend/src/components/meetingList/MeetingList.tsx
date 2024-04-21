@@ -1,17 +1,49 @@
-import { Card, Text, Stack, Badge, Group, Title, Button } from '@mantine/core'; // Assuming you're using Mantine
+import {
+  Card,
+  Text,
+  Stack,
+  Badge,
+  Group,
+  Title,
+  Button,
+  Alert,
+  LoadingOverlay,
+} from '@mantine/core'; // Assuming you're using Mantine
 import classes from './MeetingList.module.css';
 import { Meeting } from '../../api/model';
+import { useNavigate } from 'react-router-dom';
+import { useRoomsControllerGetMeetings } from '../../api/rooms/rooms';
+
+const meetings_dummy: Meeting[] = [
+  {
+    id: 1,
+    name: 'Meeting 1',
+    startTime: new Date().toISOString(),
+    transcripts: [],
+    duration: 0,
+    room: {
+      createdBy: {
+        id: 1,
+        password: 'string;',
+        transcripts: [],
+        username: 'testuser',
+      },
+      description: 'string',
+      id: 2,
+      meetings: [],
+      name: '2112',
+    },
+  },
+];
 
 type MeetingProps = {
   meeting: Meeting;
-  setSelectedMeetingId: (num: number) => void;
 };
 
-const MeetingCard = ({ meeting, setSelectedMeetingId }: MeetingProps) => {
+const MeetingCard = ({ meeting }: MeetingProps) => {
   const isPast = new Date(meeting.startTime) < new Date(); // Check if meeting has already started
   const isLive = true;
-
-  // const { hovered, ref } = useHover();
+  const redirect = useNavigate();
 
   let status;
   if (isLive) {
@@ -31,7 +63,7 @@ const MeetingCard = ({ meeting, setSelectedMeetingId }: MeetingProps) => {
       style={{ width: '100%' }}
       className={classes.meetingCard}
       onClick={() => {
-        setSelectedMeetingId(meeting.id);
+        redirect(`/meeting/${meeting.id}`);
       }}
     >
       <Stack>
@@ -47,31 +79,29 @@ const MeetingCard = ({ meeting, setSelectedMeetingId }: MeetingProps) => {
   );
 };
 
-export const MeetingsList = ({
-  meetings,
-  setSelectedMeetingId,
-}: {
-  meetings: Meeting[];
-  setSelectedMeetingId: (num: number) => void;
-}) => {
+export const MeetingsList = ({ roomId }: { roomId: number }) => {
+  const { data: meetings, isLoading } = useRoomsControllerGetMeetings(
+    roomId.toString() || '',
+  );
   return (
-    <Stack mt="40" pb="lg" mx="lg">
+    <Stack mt="40" pb="lg" mx="lg" pos="relative">
+      <LoadingOverlay visible={isLoading} />
+
       <Group>
         <Title order={1} px="xl" c="teal.6">
-          Meetings
+          Meetings in {}
         </Title>
-        <Button></Button>
       </Group>
 
-      {meetings.map((meeting) => (
-        <MeetingCard
-          key={meeting.id}
-          meeting={meeting}
-          setSelectedMeetingId={setSelectedMeetingId}
-        />
-      ))}
+      {meetings &&
+        meetings.map((meeting) => (
+          <MeetingCard key={meeting.id} meeting={meeting} />
+        ))}
+      {meetings && meetings.length == 0 && (
+        <Alert title="No meetings here">
+          There are no meetings organized in this room. Try to create some
+        </Alert>
+      )}
     </Stack>
   );
 };
-
-
