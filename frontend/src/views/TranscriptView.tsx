@@ -9,12 +9,15 @@ import {
   Title,
   ScrollArea,
   Tabs,
+  Button,
   // Button,
 } from '@mantine/core';
 
 import { Transcript } from '../api/model';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useMeetingsControllerGetOne } from '../api/meetings/meetings';
+import { IconCornerDownRight } from '@tabler/icons-react';
+import { isValidHttpUrl } from '../utils';
 
 export const TranscriptView = () => {
   const { meetingId } = useParams();
@@ -28,7 +31,7 @@ export const TranscriptView = () => {
   // console.log('transcript data: ' + data);
 
   return (
-    <Tabs defaultValue="transcripts" h="100%" >
+    <Tabs defaultValue="transcripts" h="100%">
       <Container py="xl">
         <Tabs.List>
           <Tabs.Tab value="transcripts">
@@ -44,15 +47,8 @@ export const TranscriptView = () => {
         </Tabs.List>
       </Container>
 
-      <Tabs.Panel
-        value="transcripts"
-        h="100%"
-      >
-        <Container
-          pos="relative"
-          h="100%"
-         
-        >
+      <Tabs.Panel value="transcripts" h="100%">
+        <Container pos="relative" h="100%">
           <LoadingOverlay visible={isLoading} />
           <Stack gap="xl" h="100%">
             {error && (
@@ -63,7 +59,7 @@ export const TranscriptView = () => {
             <ScrollArea h="100%" p="xl" style={{ overflowY: 'auto' }}>
               <Stack gap="3rem" mb="xl">
                 {data?.transcripts?.map((transcript: Transcript) => (
-                  <Stack gap="xs" key={transcript.id} >
+                  <Stack gap="xs" key={transcript.id}>
                     <Group w="100%" justify="space-between">
                       <Badge variant="light" radius="xs">
                         {transcript?.createdBy?.username}
@@ -85,7 +81,32 @@ export const TranscriptView = () => {
                     >
                       {transcript.text}
                     </Text>
-                    <Group wrap="nowrap" align="self-start"></Group>
+                    {transcript.gitlabData && (
+                      <>
+                        <Group wrap="nowrap" align="self-start">
+                          <IconCornerDownRight size="2rem" opacity={0.5} />
+                          <Alert
+                            variant="light"
+                            title="Gitlab integration"
+                            py="sm"
+                            color="dark"
+                          >
+                            {isValidHttpUrl(transcript.gitlabData) ? (
+                              <Button
+                                size="xs"
+                                variant="subtle"
+                                component={Link}
+                                to={transcript.gitlabData}
+                              >
+                                Follow link
+                              </Button>
+                            ) : (
+                              <strong>{transcript.gitlabData}</strong>
+                            )}
+                          </Alert>
+                        </Group>
+                      </>
+                    )}
                   </Stack>
                 ))}
               </Stack>

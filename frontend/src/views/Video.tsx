@@ -92,9 +92,10 @@ const Room = () => {
         data: {
           status: UpdateMeetingDtoStatus.finished,
         },
+      }).finally(() => {
+        socketRef.current?.close();
+        window.location.replace('/');
       });
-      socketRef.current?.close();
-      window.location.replace('/');
     }
   };
 
