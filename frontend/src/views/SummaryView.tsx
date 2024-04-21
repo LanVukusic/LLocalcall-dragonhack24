@@ -1,6 +1,5 @@
 import {
   Alert,
-  Badge,
   Text,
   Container,
   Group,
@@ -9,6 +8,7 @@ import {
   Title,
   ScrollArea,
   Button,
+  Badge,
   // Button,
 } from '@mantine/core';
 
@@ -17,7 +17,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useMeetingsControllerGetTranscripts } from '../api/meetings/meetings';
 import { IconNotes } from '@tabler/icons-react';
 
-export const TranscriptView = () => {
+export const SummaryView = () => {
   const { meetingId } = useParams();
 
   const { data, isLoading, error } = useMeetingsControllerGetTranscripts(
@@ -55,19 +55,17 @@ export const TranscriptView = () => {
             <Stack gap="3rem">
               {data?.map((transcript: Transcript) => (
                 <Stack gap="xs" key={transcript.id}>
-                  <Group w="100%" justify="space-between">
+                  <Group>
                     <Badge variant="light" radius="xs">
                       {transcript.createdBy.username}
                     </Badge>
-                    <Group>
-                      <Text size="xs" opacity={0.5}>
-                        {new Date(transcript.start).toLocaleTimeString()}
-                      </Text>
+                    <Text size="xs" opacity={0.5}>
+                      {new Date(transcript.start).toLocaleTimeString()}
+                    </Text>
 
-                      <Text size="xs" opacity={0.5}>
-                        {new Date(transcript.end).toLocaleTimeString()}
-                      </Text>
-                    </Group>
+                    <Text size="xs" opacity={0.5}>
+                      {new Date(transcript.end).toLocaleTimeString()}
+                    </Text>
                   </Group>
                   <Text
                     style={{

@@ -86,9 +86,9 @@ const Room = () => {
         data: {
           status: UpdateMeetingDtoStatus.finished,
         },
-      }));
-    socketRef.current?.close();
-    redirect('/');
+      }),
+      socketRef.current?.close(),
+      redirect('/'));
   };
 
   useEffect(() => {
