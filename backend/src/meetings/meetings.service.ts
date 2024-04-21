@@ -56,15 +56,18 @@ export class MeetingsService {
         }
       });
 
+      const summary = res.data.summary || 'No summary available';
+
       await this.meetingRepository.update(
         { id },
         {
-          summary: res.data.summary || 'No summary available',
+          summary: summary,
         },
       );
 
-      console.log(res);
-
+      this.logger.log(
+        `Summary for meeting ${id}: ${summary.splice(0, 100)}...`,
+      );
       // cre
     }
 
