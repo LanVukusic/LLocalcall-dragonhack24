@@ -13,15 +13,17 @@ import {
 import {
   IconMicrophone,
   IconMicrophoneOff,
+  IconPlayerStop,
   IconVideo,
   IconVideoOff,
 } from '@tabler/icons-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { $currUser } from '../../global-state/user';
 
 const attendees = [
   {
     id: 1,
-    name: 'Alice Johnson',
+    name: 'jakob@mrak.si',
     muted: false,
     cameraOn: true,
   },
@@ -49,6 +51,11 @@ export const MeetingView = () => {
   // const { meetingId } = useParams();
   const redirect = useNavigate();
 
+  // const { mutateAsync, isPending } = useMeetingControllerUpdate(meetingId);
+
+  const currentUsername = $currUser.value?.name;
+  console.log(currentUsername);
+
   const [cameraStatus, setCameraStatus] = useState(true); // Camera on by default
   const [microphoneStatus, setMicrophoneStatus] = useState(true); // Microphone on by default
   const onCameraToggle = () => {
@@ -59,12 +66,32 @@ export const MeetingView = () => {
     setMicrophoneStatus((prevStatus) => !prevStatus);
   };
 
+  // const endMeeting = async () => {
+  //   confirm('Sure want to end the meeting?') &&
+  //     (await mutateAsync({
+  //       data: {
+  //         isFinished: true,
+  //       },
+  //     })) &&
+  //     redirect('/');
+  // };
+
   return (
     <Stack mt="40" pb="lg" mx="lg">
       <Grid grow pb="md" gutter="xs">
         {attendees.map((attendee) => (
           <Grid.Col key={attendee.id} span={4}>
-            <Card shadow="md" radius="md" withBorder p={10} h="200px">
+            <Card
+              shadow="md"
+              radius="md"
+              withBorder
+              p={10}
+              h="200px"
+              style={{
+                borderColor:
+                  currentUsername === attendee.name ? 'violet' : 'transparent',
+              }}
+            >
               <Stack justify="center" align="center" h="100%">
                 <Avatar
                   src={`https://avatars.dicebear.com/api/adventurer/${attendee.name}.svg`}
@@ -84,25 +111,41 @@ export const MeetingView = () => {
           </Grid.Col>
         ))}
       </Grid>
-      <Group mt="auto" p="10" justify="left">
-        <Button onClick={() => onMicrophoneToggle()}>
-          {microphoneStatus ? (
-            <IconMicrophone size={20} />
-          ) : (
-            <IconMicrophoneOff size={20} />
-          )}
-        </Button>
-        <Button onClick={() => onCameraToggle()}>
-          {cameraStatus ? <IconVideo size={20} /> : <IconVideoOff size={20} />}
-        </Button>
+      <Group mt="auto" p="10" justify="space-between">
+        <Group justify="left">
+          <Button onClick={() => onMicrophoneToggle()}>
+            {microphoneStatus ? (
+              <IconMicrophone size={20} />
+            ) : (
+              <IconMicrophoneOff size={20} />
+            )}
+          </Button>
+          <Button onClick={() => onCameraToggle()}>
+            {cameraStatus ? (
+              <IconVideo size={20} />
+            ) : (
+              <IconVideoOff size={20} />
+            )}
+          </Button>
 
+          <Button
+            variant="light"
+            onClick={() => {
+              confirm('Sure want to leave the meeting?') && redirect('/');
+            }}
+          >
+            Leave Meeting
+          </Button>
+        </Group>
         <Button
-          variant="light"
           onClick={() => {
-            confirm('Sure want to leave the meeting?') && redirect('/');
+            // endMeeting();
           }}
         >
-          Leave Meeting
+          <Group>
+            <Text>End Meeting</Text>
+            <IconPlayerStop size={20} />
+          </Group>
         </Button>
       </Group>
     </Stack>

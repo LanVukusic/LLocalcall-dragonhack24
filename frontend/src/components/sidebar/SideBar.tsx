@@ -54,7 +54,7 @@ export const SideBar = ({
           <Group justify="space-between" w="100%" h="100%">
             <Stack w="100%" h="100%">
               <Group align="center" justify="space-between" w="100%">
-                <Title order={2} c="teal.6">
+                <Title order={2} >
                   Rooms
                 </Title>
                 <ActionIcon onClick={handlers.close} variant="subtle">

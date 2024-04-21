@@ -22,12 +22,13 @@ type MeetingProps = {
 
 const MeetingCard = ({ meeting }: MeetingProps) => {
   const isPast = new Date(meeting.startTime) < new Date(); // Check if meeting has already started
+  // const isLive = !meeeting.isFinished;
   const isLive = true;
   const redirect = useNavigate();
 
   let status;
   if (isLive) {
-    status = <Badge color="teal">Live</Badge>;
+    status = <Badge color="red">Live</Badge>;
   } else if (isPast) {
     status = <Badge color="gray">Past</Badge>;
   } else {
@@ -43,6 +44,9 @@ const MeetingCard = ({ meeting }: MeetingProps) => {
       style={{ width: '100%' }}
       className={classes.meetingCard}
       onClick={() => {
+        // meeting.status === 'live'
+        //   ? redirect(`/meeting/${meeting.id}`)
+        //   : redirect(`/transcript/${meeting.id}`);
         redirect(`/meeting/${meeting.id}`);
       }}
     >
@@ -65,31 +69,13 @@ const MeetingCard = ({ meeting }: MeetingProps) => {
 };
 
 export const MeetingsList = ({ room }: { room: Room }) => {
-  const { data: meetings, isLoading } = useRoomsControllerGetMeetings(
-    room.id.toString(),
-  );
+  const {
+    data: meetings,
+    isLoading,
+    refetch,
+  } = useRoomsControllerGetMeetings(room.id.toString());
+  const redirect = useNavigate();
 
-  const AddBtn = (
-    <Button
-      justify="space-between"
-      onClick={() => {
-        openTypedModal({
-          modal: 'createMeeting',
-          title: 'Create Meeting',
-          body: {
-            refetch: refetch,
-
-            roomId: room.id,
-          },
-        });
-      }}
-    >
-      <Text mr="sm">Create meeting</Text>
-      <IconPlus size={20} />
-    </Button>
-  );
-
-  const { refetch } = useRoomsControllerGetMeetings(room.id.toString());
   return (
     <Container>
       <Stack mt="40" pb="lg" pos="relative" gap="xl">
@@ -105,7 +91,23 @@ export const MeetingsList = ({ room }: { room: Room }) => {
               </Text>
             </Stack>
           </Stack>
-          {AddBtn}
+          <Button
+            justify="space-between"
+            onClick={() => {
+              openTypedModal({
+                modal: 'createMeeting',
+                title: 'Create Meeting',
+                body: {
+                  refetch: refetch,
+                  roomId: room.id,
+                  redirect: redirect
+                },
+              });
+            }}
+          >
+            <Text mr="sm">Create meeting</Text>
+            <IconPlus size={20} />
+          </Button>
         </Group>
 
         {meetings &&
