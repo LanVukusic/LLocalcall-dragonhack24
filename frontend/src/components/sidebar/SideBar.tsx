@@ -20,7 +20,7 @@ type SideBarProps = {
     readonly toggle: () => void;
   };
   selectedRoom: number | null;
-  setSelectedRoom: (room: number) => void;
+  setSelectedRoom: (room: Room) => void;
   loadingRooms: boolean;
   rooms: Room[] | undefined;
   refetch: () => void;
@@ -35,10 +35,6 @@ export const SideBar = ({
   rooms,
   refetch,
 }: SideBarProps) => {
-  const setRoom = (roomId: number) => {
-    setSelectedRoom(roomId);
-  };
-
   return (
     <Stack
       h="100%"
@@ -73,7 +69,7 @@ export const SideBar = ({
                       key={room.id}
                       ml="20"
                       m="5"
-                      onClick={() => setRoom(room.id)}
+                      onClick={() => setSelectedRoom(room)}
                       style={{
                         fontWeight:
                           selectedRoom === room.id ? 'bold' : 'normal',
