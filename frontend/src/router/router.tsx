@@ -24,6 +24,11 @@ export const router = createBrowserRouter([
         element: <TranscriptView />,
       },
       {
+        path: '/meeting/:meetingId',
+        element: <TranscriptView />,
+      },
+
+      {
         path: '/video',
         element: <Room match={{ params: { roomID: 'dsa' } }} />,
       },

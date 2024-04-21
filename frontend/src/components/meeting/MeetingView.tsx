@@ -42,36 +42,6 @@ const attendees = [
     muted: false,
     cameraOn: false,
   },
-  {
-    id: 5,
-    name: 'Sarah Miller',
-    muted: true,
-    cameraOn: false,
-  },
-  {
-    id: 6,
-    name: 'William Garcia',
-    muted: false,
-    cameraOn: false,
-  },
-  {
-    id: 7,
-    name: 'Olivia Martinez',
-    muted: false,
-    cameraOn: true,
-  },
-  {
-    id: 8,
-    name: 'James Brown',
-    muted: true,
-    cameraOn: true,
-  },
-  {
-    id: 9,
-    name: 'Sophia Davis',
-    muted: false,
-    cameraOn: true,
-  },
 ];
 
 interface MeetingProps {
@@ -79,11 +49,12 @@ interface MeetingProps {
   setSelectedMeetingId: (meetingId: number) => void;
 }
 
-export const MeetingView = ({ meetingId, setSelectedMeetingId }: MeetingProps) => {
+export const MeetingView = ({
+  meetingId,
+  setSelectedMeetingId,
+}: MeetingProps) => {
   // const [gridSize, setGridSize] = useState(2); // Initial grid size (2x2)
   console.log(meetingId);
-
-  
 
   const [cameraStatus, setCameraStatus] = useState(true); // Camera on by default
   const [microphoneStatus, setMicrophoneStatus] = useState(true); // Microphone on by default
@@ -144,5 +115,3 @@ export const MeetingView = ({ meetingId, setSelectedMeetingId }: MeetingProps) =
     </Stack>
   );
 };
-
-

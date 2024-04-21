@@ -46,7 +46,8 @@ const Test2 = ({
 const CreateRoom = ({
   context,
   id,
-}: ContextModalProps<{ modalPrice: number }>) => {
+  innerProps,
+}: ContextModalProps<{ refetch: () => void }>) => {
   const { mutateAsync, isPending } = useRoomsControllerCreate();
 
   const form = useForm({
@@ -58,7 +59,6 @@ const CreateRoom = ({
 
   return (
     <Stack>
-   
       <Stack>
         <LoadingOverlay visible={isPending} />
         <form
@@ -70,6 +70,7 @@ const CreateRoom = ({
               },
             }).then((data) => {
               console.log(data);
+              innerProps.refetch();
             });
             context.closeModal(id);
           })}
@@ -92,8 +93,6 @@ const CreateRoom = ({
           </Button>
         </form>
       </Stack>
-
-      
     </Stack>
   );
 };
