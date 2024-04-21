@@ -71,8 +71,12 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // maps session id -> user id
   private socketIdToUser = new Map<string, number>();
 
-  handleConnection(client: Socket) {
+  handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`);
+
+    if (this.index >= this.freeConfigs.length) {
+      client.emit('room full');
+    }
   }
 
   handleDisconnect(client: Socket) {
@@ -96,77 +100,80 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
   }
 
-  // @SubscribeMessage('join audio')
-  // async handleJoinAudio(
-  //   @ConnectedSocket() client: Socket,
-  //   @MessageBody() userId: string,
-  // ) {
-  //   console.log(this.index);
+  @SubscribeMessage('join audio')
+  async handleJoinAudio(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() userId: string,
+  ) {
+    console.log(this.index);
 
-  //   const recastedUserId = parseInt(userId);
+    const recastedUserId = parseInt(userId);
 
-  //   const user = await this.userRepository.findOneOrFail({
-  //     where: { id: recastedUserId },
-  //   });
+    const user = await this.userRepository.findOneOrFail({
+      where: { id: recastedUserId },
+    });
 
-  //   this.logger.log(`User joined audio: ${user.username}`);
-  //   this.socketIdToUser.set(client.id, recastedUserId);
+    this.logger.log(`User joined audio: ${user.username}`);
+    this.socketIdToUser.set(client.id, recastedUserId);
 
-  //   const socket: net.Socket = net.createConnection(
-  //     this.freeConfigs[this.index],
-  //     () => {
-  //       this.logger.log(
-  //         `Connected to server: ${this.freeConfigs[this.index].port}`,
-  //       );
-  //     },
-  //   );
+    const socket: net.Socket = net.createConnection(
+      this.freeConfigs[this.index],
+      () => {
+        this.logger.log(
+          `Connected to server: ${this.freeConfigs[this.index].port}`,
+        );
+      },
+    );
 
-  //   this.logger.log(`Index increased to ${this.index}`);
+    this.logger.log(`Index increased to ${this.index}`);
 
-  //   const startTime = new Date();
+    const startTime = new Date();
 
-  //   socket.on('data', async (data) => {
-  //     const c = data.toString().trim();
+    socket.on('data', async (data) => {
+      const c = data.toString().trim();
 
-  //     if (c.length < 2) {
-  //       return;
-  //     }
+      if (c.length < 2) {
+        return;
+      }
 
-  //     const splitted = c.toString().split(' ');
+      const splitted = c
+        .toString()
+        .replace(/[\u0000-\u001F]/g, '')
+        .split(' ');
 
-  //     const start = parseInt(splitted[0]);
-  //     const end = parseInt(splitted[1]);
+      const start = parseInt(splitted[0]);
+      const end = parseInt(splitted[1]);
 
-  //     const content = splitted.slice(2).join(' ');
+      const content = splitted.slice(2).join(' ');
 
-  //     if (isNaN(start) || isNaN(end)) {
-  //       return;
-  //     }
+      if (isNaN(start) || isNaN(end)) {
+        return;
+      }
 
-  //     this.logger.log(
-  //       `User: ${user.username}: ${start} <-> ${end} : ${content}`,
-  //     );
+      this.logger.log(
+        `User: ${user.username}: ${start} <-> ${end} : ${content}`,
+      );
 
-  //     const newStart = new Date(startTime.getTime() + start * 1000);
-  //     const newEnd = new Date(startTime.getTime() + end * 1000);
+      const newStart = new Date(startTime.getTime() + start * 1000);
+      const newEnd = new Date(startTime.getTime() + end * 1000);
 
-  //     await this.transcriptRepository.save({
-  //       start: newStart,
-  //       end: newEnd,
-  //       text: content,
-  //       createdBy: user,
-  //     });
+      await this.transcriptRepository.save({
+        start: newStart,
+        end: newEnd,
+        text: content,
+        createdBy: user,
+      });
 
-  //     client.emit('transcript', {
-  //       start,
-  //       end,
-  //       content,
-  //       username: user.username,
-  //     });
-  //   });
-  //   this.sockets.set(recastedUserId, socket);
-  //   this.index++;
-  // }
+      client.emit('transcript', {
+        start,
+        end,
+        content,
+        username: user.username,
+      });
+    });
+    this.sockets.set(recastedUserId, socket);
+    this.index++;
+  }
 
   @SubscribeMessage('join room')
   handleJoinRoom(
@@ -224,10 +231,7 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('audio')
   handleAudio(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
-    console.log('Received audio data');
     const clientId = client.id;
-
-    console.log(this.socketIdToUser);
 
     if (!this.socketIdToUser.has(clientId)) {
       return;
@@ -240,8 +244,6 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (!socket) {
       return;
     }
-
-    console.log('Sending data to server');
 
     socket.write(data);
   }
