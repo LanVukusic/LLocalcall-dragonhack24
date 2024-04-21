@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import io, { Socket } from 'socket.io-client';
 
 import { SignalData } from 'simple-peer';
@@ -44,7 +44,7 @@ const Video: React.FC<VideoProps> = ({ peer }) => {
     });
   }, [peer]);
 
-  return <video style={{ maxWidth: '300px' }} playsInline autoPlay ref={ref} />;
+  return <video style={{ maxWidth: '400px' }} playsInline autoPlay ref={ref} />;
 };
 
 const videoConstraints = {
@@ -71,6 +71,8 @@ const Room = () => {
   const peersRef = useRef<PeerData[]>([]);
   const redirect = useNavigate();
 
+  const viewportRef = useRef<HTMLDivElement>(null);
+
   // const params = useParams();
 
   // const roomID = (params.meetingId || '0').toString();
@@ -81,18 +83,29 @@ const Room = () => {
   const [transcripts, setTranscripts] = useState<Transcript[]>([]);
   const { mutateAsync, isPending } = useMeetingsControllerUpdate();
 
+  console.log({ transcripts });
+
   const endMeeting = async () => {
     if (confirm('Sure want to end the meeting?')) {
-      await mutateAsync({
+      mutateAsync({
         id: selectedMeet?.id.toString() || '',
         data: {
           status: UpdateMeetingDtoStatus.finished,
         },
       });
       socketRef.current?.close();
-      redirect('/');
+      window.location.replace('/');
     }
   };
+
+  const scrollToBottom = useCallback(() => {
+    if (viewportRef.current) {
+      viewportRef.current.scrollTo({
+        top: viewportRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (!selectedMeet) {
@@ -175,6 +188,7 @@ const Room = () => {
             });
 
             setPeers((prevPeers) => [...prevPeers, peer]);
+            scrollToBottom();
           },
         );
 
@@ -266,7 +280,13 @@ const Room = () => {
           p="xl"
           style={{ overflow: 'hidden' }}
         >
-          <ScrollArea h="100%" w="100%" type="always" scrollbars="y">
+          <ScrollArea
+            h="100%"
+            w="100%"
+            type="always"
+            scrollbars="y"
+            ref={viewportRef}
+          >
             {transcripts && transcripts.length == 0 && (
               <Stack>
                 <Skeleton height={8} mt={6} radius="xl" />
@@ -308,7 +328,7 @@ const Room = () => {
             autoPlay
             playsInline
             style={{
-              maxWidth: '300px',
+              maxWidth: '400px',
               borderRadius: '5px',
               border: '1px solid --mantine-color-gray-1',
             }}
