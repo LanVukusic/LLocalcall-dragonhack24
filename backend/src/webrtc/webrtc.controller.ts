@@ -56,11 +56,11 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
     {
       host,
       port: 43003,
-    } /*
+    },
     {
       host,
       port: 43004,
-    }, */,
+    },
   ];
 
   private index = 0;
