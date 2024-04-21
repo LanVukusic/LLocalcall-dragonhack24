@@ -85,8 +85,10 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (this.socketIdToUser.has(client.id)) {
       const userId = this.socketIdToUser.get(client.id);
 
-      this.sockets.get(userId).end();
-      this.sockets.delete(userId);
+      if (this.sockets.has(userId)) {
+        this.sockets.get(userId).end();
+        this.sockets.delete(userId);
+      }
       this.socketIdToUser.delete(client.id);
     }
 

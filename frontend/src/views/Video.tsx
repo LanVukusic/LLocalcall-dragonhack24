@@ -76,8 +76,8 @@ const Room = () => {
   const [transcripts, setTranscripts] = useState<Transcript[]>([]);
 
   useEffect(() => {
-    socketRef.current = io('http://142.93.161.127:3000');
-    // socketRef.current = io('http://localhost:3000');
+    // socketRef.current = io('http://142.93.161.127:3000');
+    socketRef.current = io('http://localhost:3000');
 
     socketRef.current.emit('join audio', user?.sub);
 
