@@ -78,6 +78,13 @@ export class MeetingsService {
     return updated;
   }
 
+  getOne(id: number) {
+    return this.meetingRepository.findOne({
+      where: { id },
+      relations: ['transcripts', 'room'],
+    });
+  }
+
   remove(id: number) {
     return this.meetingRepository.delete({ id });
   }
