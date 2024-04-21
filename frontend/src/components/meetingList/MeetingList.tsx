@@ -45,7 +45,7 @@ const MeetingCard = ({ meeting }: MeetingProps) => {
       onClick={() => {
         meetingStatus === 'live'
           ? redirect(`/meeting/${meeting.id}`)
-          : redirect(`/transcript/${meeting.id}`);
+          : redirect(`/meeting/${meeting.id}/transcript`);
       }}
     >
       <Stack>

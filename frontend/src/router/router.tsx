@@ -21,8 +21,8 @@ export const router = createBrowserRouter([
         element: <DashBoard />,
       },
       {
-        path: '/transcript/:transcriptId',
-        element: <TranscriptView />,
+        path: '/meeting/:meetingId/transcript',
+        element: <TranscriptView/>,
       },
       {
         path: '/meeting/:meetingId',
