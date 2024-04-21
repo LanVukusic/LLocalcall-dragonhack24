@@ -4,6 +4,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -26,7 +27,7 @@ export class Meeting {
   @OneToMany(() => Transcript, (transcript) => transcript.meeting)
   transcripts: Transcript[];
 
-  @OneToOne(() => Room)
+  @ManyToOne(() => Room)
   @JoinColumn()
   room: Room;
 }

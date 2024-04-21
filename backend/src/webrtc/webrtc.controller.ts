@@ -1,17 +1,17 @@
-import { Logger, Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-  WebSocketGateway,
-  WebSocketServer,
-  SubscribeMessage,
   ConnectedSocket,
   MessageBody,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
 import * as net from 'net';
+import { Server, Socket } from 'socket.io';
 
-import * as fs from 'fs';
+const host = '142.93.161.127';
 
 @WebSocketGateway({
   cors: {
@@ -26,36 +26,75 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private users: { [key: string]: string[] } = {};
   private socketToRoom: { [key: string]: string } = {};
 
-  private socket: net.Socket;
+  private freeConfigs = [
+    {
+      host,
+      port: 43001,
+    },
+    {
+      host,
+      port: 43002,
+    },
+    {
+      host,
+      port: 43003,
+    },
+    {
+      host,
+      port: 43004,
+    },
+  ];
 
-  // Write data to a file
-  private;
+  private index = 0;
+
+  private sockets = new Map<string, net.Socket>();
 
   handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client connected: ${client.id}`);
 
-    try {
-      // 142.93.161.127:43001
-      this.socket = net.createConnection(
-        {
-          host: '142.93.161.127',
-          port: 43001,
-        },
-        () => {
-          this.logger.log('Connected');
-        },
-      );
-
-      this.socket.on('data', (data) => {
-        console.log(`Received: ${data}`);
-      });
-    } catch (e: any) {
-      // this.logger.error(e);
+    if (this.index >= this.freeConfigs.length) {
+      client.emit('room full');
+      return;
     }
+
+    const socket: net.Socket = net.createConnection(
+      this.freeConfigs[this.index],
+      () => {
+        this.logger.log(
+          `Connected to server: ${this.freeConfigs[this.index].port}`,
+        );
+      },
+    );
+
+    socket.on('data', (data) => {
+      if (data.length < 2) {
+        return;
+      }
+
+      const splitted = data.toString().split(' ');
+
+      const start = parseInt(splitted[0]);
+      const end = parseInt(splitted[1]);
+
+      const allElse = splitted.slice(2).join(' ');
+
+      console.log('start', start, 'end', end, 'allElse', allElse);
+    });
+
+    this.sockets.set(client.id, socket);
+    this.index++;
   }
 
   handleDisconnect(client: Socket) {
     const roomID = this.socketToRoom[client.id];
+
+    if (this.sockets.has(client.id)) {
+      this.sockets.get(client.id).destroy();
+      this.sockets.delete(client.id);
+
+      this.index--;
+    }
+
     if (roomID) {
       this.users[roomID] = this.users[roomID].filter((id) => id !== client.id);
       if (this.users[roomID].length === 0) {
@@ -122,13 +161,14 @@ export class WebrtcGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('audio')
   handleAudio(@ConnectedSocket() client: Socket, @MessageBody() data: any) {
-    // this.logger.log(`Client sending audio: ${data}`);
-    //
-    this.socket.write(data);
-    // fs.appendFile('audio.pcm', data, (err) => {
-    //   if (err) {
-    //     console.log(err);
-    //   }
-    // });
+    const clientId = client.id;
+
+    const socket = this.sockets.get(clientId);
+
+    if (!socket) {
+      return;
+    }
+
+    socket.write(data);
   }
 }
