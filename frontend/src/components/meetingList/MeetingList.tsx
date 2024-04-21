@@ -7,33 +7,14 @@ import {
   Alert,
   LoadingOverlay,
   Container,
+  Button,
 } from '@mantine/core'; // Assuming you're using Mantine
 import classes from './MeetingList.module.css';
 import { Meeting, Room } from '../../api/model';
+import { IconPlus } from '@tabler/icons-react';
+import { openTypedModal } from '../../mantine/modals/modals-utils';
 import { useNavigate } from 'react-router-dom';
 import { useRoomsControllerGetMeetings } from '../../api/rooms/rooms';
-
-// const meetings_dummy: Meeting[] = [
-//   {
-//     id: 1,
-//     name: 'Meeting 1',
-//     startTime: new Date().toISOString(),
-//     transcripts: [],
-//     duration: 0,
-//     room: {
-//       createdBy: {
-//         id: 1,
-//         password: 'string;',
-//         transcripts: [],
-//         username: 'testuser',
-//       },
-//       description: 'string',
-//       id: 2,
-//       meetings: [],
-//       name: '2112',
-//     },
-//   },
-// ];
 
 type MeetingProps = {
   meeting: Meeting;
@@ -87,6 +68,8 @@ export const MeetingsList = ({ room }: { room: Room }) => {
       <Stack mt="40" pb="lg" pos="relative" gap="xl">
         <LoadingOverlay visible={isLoading} />
 
+  
+        <Group>
         <Stack gap="xs" pb="xl">
           <Text size="md" opacity={0.7}>
             Meetings in
@@ -95,6 +78,20 @@ export const MeetingsList = ({ room }: { room: Room }) => {
             {room.name}
           </Text>
         </Stack>
+        <Button justify='space-between' onClick={() => {
+              openTypedModal({
+                modal: 'createMeeting',
+                title: 'Create Meeting',
+                body: {
+                  roomId: room.id,
+                }
+              });
+            }}>
+          <Text mr="sm">Create meeting</Text>
+          <IconPlus size={20} />
+        </Button>
+        </Group>
+        
 
         {meetings &&
           meetings.map((meeting) => (
