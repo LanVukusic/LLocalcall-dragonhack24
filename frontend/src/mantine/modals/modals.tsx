@@ -1,56 +1,18 @@
-import { Badge, Button, LoadingOverlay, Stack, TextInput } from '@mantine/core';
+import { Button, LoadingOverlay, Stack, TextInput } from '@mantine/core';
 import { ContextModalProps } from '@mantine/modals';
 import {
   useRoomsControllerCreate,
   useRoomsControllerCreateMeeting,
 } from '../../api/rooms/rooms';
 import { useForm } from '@mantine/form';
+import { NavigateFunction } from 'react-router-dom';
 
-const Test = ({
-  context,
-  id,
-  innerProps,
-}: ContextModalProps<{ modalBody: string }>) => {
-  return (
-    <Stack>
-      {innerProps.modalBody}
-      <Badge>{id}</Badge>
-      <Button
-        onClick={() => {
-          context.closeModal(id);
-        }}
-      >
-        close
-      </Button>
-    </Stack>
-  );
-};
-
-const Test2 = ({
-  context,
-  id,
-  innerProps,
-}: ContextModalProps<{ modalPrice: number }>) => {
-  return (
-    <Stack>
-      {innerProps.modalPrice}
-      {id}
-      <Button
-        onClick={() => {
-          context.closeModal(id);
-        }}
-      >
-        close
-      </Button>
-    </Stack>
-  );
-};
 
 const CreateMeeting = ({
   context,
   id,
   innerProps,
-}: ContextModalProps<{ roomId: number; refetch: () => void }>) => {
+}: ContextModalProps<{ roomId: number; refetch: () => void, redirect: NavigateFunction }>) => {
   const { mutateAsync, isPending } = useRoomsControllerCreateMeeting();
 
   const form = useForm({
@@ -86,9 +48,10 @@ const CreateMeeting = ({
               duration: values.duration,
             },
             id: innerProps.roomId.toString(),
-          }).then(() => {
-            innerProps.refetch();
-            console.log('Meeting created');
+          }).then((data) => {
+           
+            innerProps.redirect(`/meeting/${data.id}`);
+            
           });
           context.closeModal(id);
         })}
@@ -168,8 +131,7 @@ const CreateRoom = ({
 };
 
 export const mantineModals = {
-  testName: Test,
-  test2name: Test2,
+
   createRoom: CreateRoom,
   createMeeting: CreateMeeting,
 } as const;

@@ -40,7 +40,7 @@ export const DashBoard = () => {
           {selectedRoom ? (
             <MeetingsList room={selectedRoom} />
           ) : (
-            <Alert title="No rooms seleted">
+            <Alert title="No rooms seleted" mx="lg">
               Open the sidebar and select a room
             </Alert>
           )}
