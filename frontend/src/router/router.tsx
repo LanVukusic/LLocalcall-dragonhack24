@@ -29,7 +29,7 @@ export const router = createBrowserRouter([
         element: <MeetingView />,
       },
       {
-        path: '/video/:meetingId',
+        path: '/video',
         element: <Room />,
       },
     ],

@@ -9,8 +9,20 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+export enum Status {
+  LIVE = 'live',
+  FINISHED = 'finished',
+}
+
 @Entity({ name: 'meetings' })
 export class Meeting {
+  @Column({
+    type: 'enum',
+    enum: Status,
+    nullable: false,
+  })
+  service: Status;
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -19,6 +31,11 @@ export class Meeting {
 
   @Column()
   startTime: Date;
+
+  @Column({
+    nullable: true,
+  })
+  endTime?: Date;
 
   @Column()
   duration: number;

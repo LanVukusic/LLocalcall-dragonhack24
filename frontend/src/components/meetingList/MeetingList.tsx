@@ -55,8 +55,13 @@ const MeetingCard = ({ meeting }: MeetingProps) => {
           <Text style={{ fontWeight: 'bold' }}>{meeting.name} </Text>
           {status}
         </Group>
-        <Group>
-          <Text>{meeting.startTime.toLocaleString()} - </Text>
+        <Group gap="xs">
+          <Text opacity={0.5}>
+            {new Date(meeting.startTime).toLocaleDateString()}
+          </Text>
+          <Text fw="bold">
+            {new Date(meeting.startTime).toLocaleTimeString()}
+          </Text>
         </Group>
       </Stack>
     </Card>
@@ -75,15 +80,16 @@ export const MeetingsList = ({ room }: { room: Room }) => {
     <Container>
       <Stack mt="40" pb="lg" pos="relative" gap="xl">
         <LoadingOverlay visible={isLoading} />
-
-        <Group>
+        <Group w="100%" justify="space-between">
           <Stack gap="xs" pb="xl">
-            <Text size="md" opacity={0.7}>
-              Meetings in
-            </Text>
-            <Text size="2rem" fw="bold">
-              {room.name}
-            </Text>
+            <Stack>
+              <Text size="2rem" fw="bold">
+                {room.name}
+              </Text>
+              <Text size="md" c="teal.7" fw="lighter" opacity={0.8}>
+                {room.description}
+              </Text>
+            </Stack>
           </Stack>
           <Button
             justify="space-between"

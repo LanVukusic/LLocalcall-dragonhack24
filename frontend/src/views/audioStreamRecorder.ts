@@ -25,15 +25,20 @@ export class Streamer {
     onDataAvailable: (ev: ArrayBuffer) => void,
   ) {
     // this line is added on load in --audioStore.ts--
-    ctx.audioWorklet.addModule('processor-script.js').then(() => {
-      this.processor = new AudioWorkletNode(ctx, 'mic-processor');
-      this.processor.port.onmessage = (e) => {
-        onDataAvailable(e.data);
-      };
+    ctx.audioWorklet
+      .addModule('processor-script.js')
+      .then(() => {
+        this.processor = new AudioWorkletNode(ctx, 'mic-processor');
+        this.processor.port.onmessage = (e) => {
+          onDataAvailable(e.data);
+        };
 
-      this.source = ctx.createMediaStreamSource(stream);
-      this.source.connect(this.processor);
-    });
+        this.source = ctx.createMediaStreamSource(stream);
+        this.source.connect(this.processor);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   }
 
   destroy() {

@@ -6,6 +6,8 @@ import { SignalData } from 'simple-peer';
 import Peer from 'simple-peer/simplepeer.min.js';
 import { Streamer } from './audioStreamRecorder';
 import { Card, Flex, ScrollArea, Stack } from '@mantine/core';
+import { useStore } from '@nanostores/react';
+import { $currUser } from '../global-state/user';
 
 interface VideoProps {
   peer: Peer.Instance;
@@ -54,19 +56,15 @@ const Room = () => {
 
   const roomID = 'dsa';
 
-  // const user = useStore($currUser);
+  const user = useStore($currUser);
 
   const [transcripts, setTranscripts] = useState<Transcript[]>([]);
 
   useEffect(() => {
-    console.log('dasdsa');
-
     // socketRef.current = io('http://142.93.161.127:3000');
     socketRef.current = io('http://localhost:3000');
 
-    // console.log(user?.sub);
-
-    socketRef.current.emit('join audio', '1');
+    socketRef.current.emit('join audio', user?.sub);
 
     socketRef.current.on('transcript', (data: Transcript) => {
       setTranscripts((prev) => [...prev, data]);
@@ -88,7 +86,6 @@ const Room = () => {
             stream,
             new AudioContext({ sampleRate: 16000 }),
             (data) => {
-              console.log('hjes');
               if (!socketRef.current) {
                 console.error('Socket not connected');
                 return;
@@ -131,14 +128,9 @@ const Room = () => {
         socketRef.current.on(
           'user joined',
           (payload: { signal: SignalData; callerID: string }) => {
-            console.log('User joined', payload.signal);
-
             console.log(
               `My id: ${socketRef.current?.id}, Caller id: ${payload.callerID}`,
             );
-
-            // Show current state
-            console.log(peersRef.current);
 
             const peer = addPeer(payload.signal, payload.callerID, stream);
             peersRef.current.push({
@@ -176,8 +168,6 @@ const Room = () => {
     });
 
     peer.on('signal', (signal: SignalData) => {
-      console.log('Signal', signal);
-
       // if (signal.renegotiate || signal.transceiverRequest) return;
 
       socketRef.current?.emit('sending signal', {
