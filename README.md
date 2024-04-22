@@ -2,6 +2,13 @@
   <img width="460" height="300" src="./frontend/public/Logo.svg">
 </p>
 
+Dragonhck 2024 project
+
+- [Jan Vasiljević](https://github.com/janvasiljevic)
+- [Jakob Mrak](https://github.com/mrakjakob)
+- [Enei Sluga](https://github.com/smufa)
+- [Lan Vukušič](https://github.com/LanVukusic)
+
 # LLocalCaLL
 
 We've developed a privacy-focused, self-hosted enterprise conferencing solution with AI-powered features. Within 24 hours, we've built a system capable of supporting up to 4 concurrent users in a meeting, complete with video and audio capabilities. All speech is transcribed, and at the conclusion of each meeting, a summary is automatically generated. Talking points are seamlessly linked to external project management tools (currently GitLab), and issues are directly referenced within the respective transcripts. Our primary selling point is that all this sensitive data never leaves the company's infrastructure. This stands in contrast to other solutions on the market, where data is stored on the servers of the conferencing provider. Our data is securely stored in a PostgreSQL database. Queries for issue searching are handled by LLama3, while speech-to-text conversion is managed by Whisper. Conferencing between participants is made using WebRTC, ensuring crisp audio and video quality (surpassing Zoom and Meet). The frontend is built using React and Mantine. The project is leveraging open-source technologies to deliver a surprisingly robust user experience. With our solution, there's no need to relinquish control of your data to Google, OpenAI, Zoom, or any other company :)
