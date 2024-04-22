@@ -2,7 +2,7 @@
   <img width="460" height="300" src="./frontend/public/Logo.svg">
 </p>
 
-Dragonhck 2024 project
+[Dragonhack 2024](https://dragonhack.si/) project
 
 - [Jan Vasiljević](https://github.com/janvasiljevic)
 - [Jakob Mrak](https://github.com/mrakjakob)
